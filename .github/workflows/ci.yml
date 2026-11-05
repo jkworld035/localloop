@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  app:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - name: Unit tests (shared logic, ETA policy, translations)
+        run: pnpm test:unit
+      - name: Typecheck mobile + shared
+        run: |
+          pnpm --filter @localloop/shared typecheck
+          pnpm --filter @localloop/mobile typecheck
+      - name: Build admin
+        run: pnpm --filter @localloop/admin build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://ci.invalid
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci
+
+  database:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL 16 + PostGIS + pgTAP
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-16 postgresql-16-postgis-3 postgresql-16-pgtap
+          sudo pg_ctlcluster 16 main start
+          sudo -u postgres psql -c "alter user postgres password 'postgres'"
+      - name: Migrations + pgTAP (RLS, lifecycle, failure paths, admin roles)
+        run: bash scripts/test-db.sh
+        env:
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: postgres
+
+  edge-functions:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with: { deno-version: v2.x }
+      - run: |
+          for f in compute-eta send-push razorpay-webhook; do deno check --no-lock supabase/functions/$f/index.ts; done

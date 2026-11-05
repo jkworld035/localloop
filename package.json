@@ -1,0 +1,24 @@
+{
+  "name": "local-loop",
+  "private": true,
+  "version": "0.1.0",
+  "description": "LocalLoop \u2014 hyperlocal commerce and real-time delivery platform",
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "mobile": "pnpm --filter @localloop/mobile start",
+    "admin": "pnpm --filter @localloop/admin dev",
+    "typecheck": "pnpm -r --parallel typecheck",
+    "test": "vitest run && pnpm -r --if-present test",
+    "test:db": "bash scripts/test-db.sh",
+    "lint": "pnpm -r lint",
+    "test:unit": "vitest run",
+    "gen:types": "python3 scripts/gen-db-types.py"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3",
+    "vitest": "^3.2.7"
+  }
+}

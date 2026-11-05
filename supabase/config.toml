@@ -1,0 +1,62 @@
+# Supabase CLI configuration (local development). Production settings are
+# configured in the Supabase dashboard — see docs/setup.md.
+project_id = "local-loop"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 200
+
+[db]
+port = 54322
+major_version = 15
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[realtime]
+enabled = true
+
+[storage]
+enabled = true
+file_size_limit = "10MiB"
+
+[auth]
+enabled = true
+site_url = "localloop://"
+additional_redirect_urls = ["localloop://*", "http://localhost:3000"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+enable_signup = true
+
+[auth.sms]
+enable_signup = true
+enable_confirmations = true
+max_frequency = "60s"
+template = "Your LocalLoop code is {{ .Code }}. Do not share it with anyone."
+
+# Local testing without an SMS provider: these numbers accept a fixed OTP.
+# Never configure test OTPs in production.
+[auth.sms.test_otp]
+919000000001 = "123456"
+919000000003 = "123456"
+919000000005 = "123456"
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+
+[auth.rate_limit]
+sms_sent = 30
+
+[functions.compute-eta]
+verify_jwt = true
+
+[functions.send-push]
+verify_jwt = false # authorised inside the function against the service-role key
+
+[functions.razorpay-webhook]
+verify_jwt = false # authenticated by Razorpay HMAC signature

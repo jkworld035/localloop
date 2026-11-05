@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+
+/* LocalLoop brand tokens (mirrors packages/shared/src/theme/tokens.ts). */
+@theme {
+  --color-forest: #174c38;
+  --color-green: #236b4e;
+  --color-amber: #e9a83a;
+  --color-ivory: #faf8f1;
+  --color-ink: #202923;
+  --color-ink-2: #5f6762;
+  --color-line: #e2ded1;
+  --color-sunken: #f1eee3;
+  --color-ok: #1e7a4c;
+  --color-ok-bg: #e3f2e9;
+  --color-warn: #8a5a00;
+  --color-warn-bg: #fbefd6;
+  --color-bad: #b42318;
+  --color-bad-bg: #fce8e6;
+  --font-sans: 'Noto Sans', 'Noto Sans Telugu', system-ui, sans-serif;
+}
+
+html {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+}
+
+/* Visible keyboard focus everywhere (accessibility requirement). */
+:focus-visible {
+  outline: 3px solid var(--color-amber);
+  outline-offset: 2px;
+}
