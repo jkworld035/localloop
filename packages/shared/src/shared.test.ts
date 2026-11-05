@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ORDER_STATUSES, ORDER_TRANSITIONS, canTransition } from './constants/order';
-import { decodePolyline, haversineMeters } from './utils/geo';
+import { decodePolyline, haversineMeters, parseEwkbPoint, toEwktPoint } from './utils/geo';
 import { formatDistance, formatINR } from './utils/format';
 import { locationFreshness } from './utils/freshness';
 import { gstin, indianMobile, pincode } from './validation/common';
@@ -62,6 +62,12 @@ describe('geo & format utils', () => {
       { latitude: 40.7, longitude: -120.95 },
       { latitude: 43.252, longitude: -126.453 },
     ]);
+  });
+  it('decodes PostGIS points returned by PostgREST', () => {
+    // select st_setsrid(st_makepoint(78.337, 18.3203), 4326)::geography  →  hex EWKB
+    expect(parseEwkbPoint('0101000020E610000021B0726891955340A7E8482EFF513240')).toEqual({ longitude: 78.337, latitude: 18.3203 });
+    expect(parseEwkbPoint('nope')).toBeNull();
+    expect(toEwktPoint({ latitude: 18.3203, longitude: 78.337 })).toBe('SRID=4326;POINT(78.337 18.3203)');
   });
   it('computes great-circle distance', () => {
     const d = haversineMeters({ latitude: 18.3203, longitude: 78.337 }, { latitude: 18.33, longitude: 78.342 });

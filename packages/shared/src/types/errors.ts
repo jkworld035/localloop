@@ -19,6 +19,7 @@ export const ERROR_CODES = [
   'review_requires_delivery', 'review_window_closed', 'invalid_rating', 'product_not_in_order',
   'no_partner_to_review', 'already_reviewed', 'cannot_change_own_role',
   'routing_not_configured', 'routing_failed',
+  'product_not_found', 'variant_required', 'duplicate_size_label', 'invalid_product_values',
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

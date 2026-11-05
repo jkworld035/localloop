@@ -2125,10 +2125,12 @@ export type Database = {
       valid_opening_hours: { Args: { h: Json }; Returns: boolean };
       vendor_accept_order: { Args: { p_order_id: string; p_prep_minutes: number }; Returns: undefined };
       vendor_cancel_order: { Args: { p_order_id: string; p_reason: string }; Returns: undefined };
+      vendor_dashboard: { Args: { p_store_id: string }; Returns: Json };
       vendor_mark_preparing: { Args: { p_order_id: string }; Returns: undefined };
       vendor_mark_ready: { Args: { p_order_id: string }; Returns: undefined };
       vendor_reject_order: { Args: { p_order_id: string; p_reason: string }; Returns: undefined };
       vendor_request_delivery: { Args: { p_order_id: string }; Returns: number };
+      vendor_save_product: { Args: { p_store_id: string; p_product_id: string; p_product: Json; p_variants: Json }; Returns: string };
     };
     Enums: {
       admin_role: "super_admin" | "operations" | "support" | "finance";

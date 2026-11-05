@@ -39,7 +39,7 @@ describe('translations', () => {
     walk(join(__dirname, '..'));
     const all = new Set(keys(en as Tree));
     const used = new Set<string>();
-    for (const f of files) for (const m of readFileSync(f, 'utf8').matchAll(/\bt\(\s*'([a-z_]+\.[a-z_.]+)'/g)) used.add(m[1]!);
+    for (const f of files) for (const m of readFileSync(f, 'utf8').matchAll(/\bt\(\s*'([a-z0-9_]+\.[a-z0-9_.]+)'/g)) used.add(m[1]!);
     const missing = [...used].filter((k) => !all.has(k) && !all.has(`${k}_one`));
     expect(missing).toEqual([]);
   });

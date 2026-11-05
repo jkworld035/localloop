@@ -29,6 +29,36 @@ function DecisionForm({ kind, id }: { kind: 'vendors' | 'stores' | 'delivery_par
   );
 }
 
+/** Short-lived links to private verification files (Storage RLS: admins with the vendors/partners permission). */
+async function signedLinks(
+  db: Awaited<ReturnType<typeof requireAdmin>>['supabase'],
+  bucket: 'vendor-documents' | 'partner-documents',
+  docs: { id: string; doc_type: string; status: string; storage_path: string }[],
+) {
+  if (!docs.length) return [];
+  const { data } = await db.storage.from(bucket).createSignedUrls(docs.map((d) => d.storage_path), 600);
+  return docs.map((d, i) => ({ ...d, url: data?.[i]?.signedUrl ?? null }));
+}
+
+function DocLinks({ docs }: { docs: { id: string; doc_type: string; status: string; url: string | null }[] }) {
+  if (!docs.length) return <p className="text-sm text-bad">No documents uploaded yet.</p>;
+  return (
+    <ul className="flex flex-wrap gap-2 text-sm">
+      {docs.map((d) => (
+        <li key={d.id}>
+          {d.url ? (
+            <a href={d.url} target="_blank" rel="noreferrer" className="rounded-lg border border-line px-3 py-1.5 font-medium text-forest hover:bg-sunken">
+              {d.doc_type.replaceAll('_', ' ')} ({d.status}) ↗
+            </a>
+          ) : (
+            <span className="text-ink-2">{d.doc_type} (link unavailable)</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function Row({ title, lines, children }: { title: string; lines: (string | null | undefined)[]; children: React.ReactNode }) {
   return (
     <li className="space-y-3 rounded-2xl border border-line bg-white p-5">
@@ -53,7 +83,7 @@ export default async function ApprovalsPage({ searchParams }: { searchParams: Pr
   const [vendors, stores, partners] = await Promise.all([
     db
       .from('vendors')
-      .select('id, owner_name, business_name, gstin, created_at, status_reason, profile:profiles!vendors_id_fkey(phone), category:categories(name_en), documents:vendor_documents(id, doc_type, status)')
+      .select('id, owner_name, business_name, gstin, created_at, status_reason, profile:profiles!vendors_id_fkey(phone), category:categories(name_en), documents:vendor_documents(id, doc_type, status, storage_path)')
       .eq('status', 'pending')
       .order('created_at'),
     roleCan(admin.role, 'stores')
@@ -66,12 +96,18 @@ export default async function ApprovalsPage({ searchParams }: { searchParams: Pr
     roleCan(admin.role, 'partners')
       ? db
           .from('delivery_partners')
-          .select('id, vehicle_type, vehicle_registration, driving_licence, created_at, profile:profiles!delivery_partners_id_fkey(full_name, phone), documents:delivery_documents(id, doc_type, status)')
+          .select('id, vehicle_type, vehicle_registration, driving_licence, created_at, profile:profiles!delivery_partners_id_fkey(full_name, phone), documents:delivery_documents(id, doc_type, status, storage_path)')
           .eq('status', 'pending')
           .order('created_at')
       : Promise.resolve({ data: [], error: null }),
   ]);
   const loadError = vendors.error ?? stores.error ?? partners.error;
+  const vendorDocs = new Map(
+    await Promise.all((vendors.data ?? []).map(async (v) => [v.id, await signedLinks(db, 'vendor-documents', v.documents)] as const)),
+  );
+  const partnerDocs = new Map(
+    await Promise.all((partners.data ?? []).map(async (p) => [p.id, await signedLinks(db, 'partner-documents', p.documents)] as const)),
+  );
   const date = (s: string) => new Date(s).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
 
   return (
@@ -91,10 +127,10 @@ export default async function ApprovalsPage({ searchParams }: { searchParams: Pr
                 lines={[
                   `${v.owner_name} · ${v.profile?.phone ?? ''}`,
                   `${v.category?.name_en ?? 'No category'} · GSTIN: ${v.gstin ?? 'not registered'}`,
-                  `Documents: ${v.documents.length ? v.documents.map((d) => `${d.doc_type} (${d.status})`).join(', ') : 'none uploaded'}`,
                   `Applied ${date(v.created_at)}`,
                 ]}
               >
+                <DocLinks docs={vendorDocs.get(v.id) ?? []} />
                 <DecisionForm kind="vendors" id={v.id} />
               </Row>
             ))}
@@ -141,10 +177,10 @@ export default async function ApprovalsPage({ searchParams }: { searchParams: Pr
                   lines={[
                     `${p.profile?.phone ?? ''} · ${p.vehicle_type}${p.vehicle_registration ? ` · ${p.vehicle_registration}` : ''}`,
                     p.driving_licence ? `DL ${p.driving_licence}` : 'No licence required (bicycle)',
-                    `Documents: ${p.documents.length ? p.documents.map((d) => `${d.doc_type} (${d.status})`).join(', ') : 'none uploaded'}`,
                     `Applied ${date(p.created_at)}`,
                   ]}
                 >
+                  <DocLinks docs={partnerDocs.get(p.id) ?? []} />
                   <DecisionForm kind="delivery_partners" id={p.id} />
                 </Row>
               ))}

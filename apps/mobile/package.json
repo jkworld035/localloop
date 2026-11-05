@@ -48,7 +48,10 @@
     "@expo-google-fonts/noto-sans": "^0.4.2",
     "@expo-google-fonts/noto-sans-telugu": "^0.4.2",
     "react-native-url-polyfill": "^2.0.0",
-    "@react-native-community/netinfo": "12.0.1"
+    "@react-native-community/netinfo": "12.0.1",
+    "expo-image-manipulator": "~58.0.16",
+    "expo-document-picker": "~58.0.4",
+    "expo-file-system": "~58.0.13"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",

@@ -64,3 +64,26 @@ export function pointFromGeoJSON(g: { coordinates: [number, number] } | null | u
   if (!g) return null;
   return { latitude: g.coordinates[1], longitude: g.coordinates[0] };
 }
+
+/**
+ * Decodes a PostGIS point as PostgREST returns it (hex EWKB, e.g.
+ * "0101000020E6100000…"). Returns null for anything that isn't a 2-D point.
+ */
+export function parseEwkbPoint(hex: unknown): LatLng | null {
+  if (typeof hex !== 'string' || !/^[0-9a-fA-F]+$/.test(hex) || hex.length < 42) return null;
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  const view = new DataView(bytes.buffer);
+  const little = bytes[0] === 1;
+  const type = view.getUint32(1, little);
+  if ((type & 0xff) !== 1) return null; // not a Point
+  const hasSrid = (type & 0x20000000) !== 0;
+  const offset = 5 + (hasSrid ? 4 : 0);
+  if (bytes.length < offset + 16) return null;
+  return { longitude: view.getFloat64(offset, little), latitude: view.getFloat64(offset + 8, little) };
+}
+
+/** EWKT for writing a point to a geography column through PostgREST (longitude first). */
+export function toEwktPoint(p: LatLng): string {
+  return `SRID=4326;POINT(${p.longitude} ${p.latitude})`;
+}

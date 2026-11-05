@@ -34,8 +34,8 @@ export default function LocationMap() {
     center.longitude <= INDIA_BOUNDS.maxLng;
 
   const confirm = async () => {
-    // Placing the pin for a new delivery address: hand the point back to the form.
-    if (params.purpose === 'address') {
+    // Placing a pin for an address or a shop: hand the point back to the form.
+    if (params.purpose === 'address' || params.purpose === 'store') {
       setAddressPoint({ latitude: center.latitude, longitude: center.longitude });
       router.back();
       return;

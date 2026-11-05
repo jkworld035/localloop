@@ -41,11 +41,23 @@ can't revoke PostgreSQL's global grant (now an explicit allowlist).
 
 **Bugs caught and fixed in Phase 2:** the shop-page visibility check let suspended shops through for signed-out users (SQL `NULL` logic); the type generator treated a partial unique index as one-to-one, mistyping product sizes.
 
+## Phase 3 test report — 6 Nov 2026
+
+| Suite | Result | What it proves |
+|---|---|---|
+| `06_vendor` (pgTAP) | **15/15 pass** | Product + all sizes + stock saved in one step; editing keeps size ids (prices change in place), removed sizes are deleted (or hidden if ever ordered), default size re-assigned; an invalid offer price or duplicate size name changes nothing; another vendor can't edit products or read the dashboard; the vendor can pause orders; low stock shows on the dashboard |
+| All earlier suites | **120/120 pass** | Unchanged behaviour |
+| Unit (vitest) | **33/33 pass** | New: PostGIS point decoding checked against real PostGIS output; translation-key check now also catches keys containing digits |
+| Typecheck · Android & iOS bundles · admin build | **pass** | Vendor tabs (home, orders, products, shop, profile), shop editor with opening hours and map pin, documents, product editor with photos, order actions; admin approvals with document links |
+
+**Bug caught in Phase 3:** the translation-key test ignored keys with digits (e.g. `vendor.sales_7d`), so a missing string could have shipped unnoticed.
+
 ## Not yet verified — needs real devices and credentials
 These can't be exercised in CI and are on the Phase 4/7 device test plan:
 - Background GPS on physical Android (Doze, OEM battery savers — test Xiaomi/Realme/Samsung) and iOS (app killed, Low Power Mode)
 - Google Routes API responses for Kamareddy roads (needs the server key)
 - Push delivery via FCM/APNs (needs EAS credentials)
+- Photo and document upload from real cameras/galleries (sizes, HEIC photos from iPhones, slow uploads on 3G)
 - SMS OTP delivery through a DLT-registered sender
 - Realtime subscription behaviour on 2G/3G and while switching networks
 - Telugu rendering on low-end Android fonts; TalkBack/VoiceOver walkthroughs
