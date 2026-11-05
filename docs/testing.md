@@ -30,6 +30,17 @@ order row existed; `quote_cart` crashing instead of reporting issues (text-array
 append); anon had EXECUTE on write RPCs because per-schema default privileges
 can't revoke PostgreSQL's global grant (now an explicit allowlist).
 
+## Phase 2 test report — 6 Nov 2026
+
+| Suite | Result | What it proves |
+|---|---|---|
+| `05_shopping` (pgTAP) | **16/16 pass** | Shop page distance/delivery from the customer's location, works without a location; suspended shops hidden from the public but visible to their owner; catalogue (products + sizes + stock) readable anonymously; addresses saved from the app's EWKT format; one default address; cart insert and quantity change allowed, moving items between carts refused; order detail items and timeline visible only to the owner |
+| All earlier suites | **104/104 pass** | Unchanged behaviour |
+| Unit (vitest) | **32/32 pass** | New: every translation key used anywhere in the app exists (catches missing EN/TE text at build time) |
+| Typecheck · Android & iOS bundles · admin build | **pass** | New screens: shop, product, cart, checkout, addresses, order detail |
+
+**Bugs caught and fixed in Phase 2:** the shop-page visibility check let suspended shops through for signed-out users (SQL `NULL` logic); the type generator treated a partial unique index as one-to-one, mistyping product sizes.
+
 ## Not yet verified — needs real devices and credentials
 These can't be exercised in CI and are on the Phase 4/7 device test plan:
 - Background GPS on physical Android (Doze, OEM battery savers — test Xiaomi/Realme/Samsung) and iOS (app killed, Low Power Mode)

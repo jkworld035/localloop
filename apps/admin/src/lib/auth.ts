@@ -2,6 +2,7 @@ import 'server-only';
 import type { Enums } from '@localloop/shared';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
+import { isConfigured } from './env';
 import { supabaseServer } from './supabase/server';
 
 export type AdminRole = Enums<'admin_role'>;
@@ -29,6 +30,8 @@ export function roleCan(role: AdminRole, perm: Permission) {
  * account is not an active admin. Call it in every page and Server Action.
  */
 export const requireAdmin = cache(async (perm?: Permission) => {
+  // Without configuration the root layout shows a setup notice; don't attempt (and log) a doomed client.
+  if (!isConfigured) redirect('/login');
   const supabase = await supabaseServer();
   const {
     data: { user },

@@ -68,7 +68,7 @@ export type Database = {
           {
             foreignKeyName: "addresses_user_id_fkey";
             columns: ["user_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
@@ -617,7 +617,7 @@ export type Database = {
           {
             foreignKeyName: "delivery_assignments_order_id_fkey";
             columns: ["order_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "orders";
             referencedColumns: ["id"];
           },
@@ -1380,7 +1380,7 @@ export type Database = {
           {
             foreignKeyName: "product_variants_product_id_fkey";
             columns: ["product_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "products";
             referencedColumns: ["id"];
           },
@@ -1611,7 +1611,7 @@ export type Database = {
           {
             foreignKeyName: "reviews_order_id_fkey";
             columns: ["order_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "orders";
             referencedColumns: ["id"];
           },
@@ -2116,8 +2116,10 @@ export type Database = {
       register_delivery_partner: { Args: { p_full_name: string; p_vehicle_type: Database["public"]["Enums"]["vehicle_type"]; p_vehicle_registration?: string; p_driving_licence?: string; p_email?: string }; Returns: Database["public"]["Tables"]["delivery_partners"]["Row"] };
       register_vendor: { Args: { p_owner_name: string; p_business_name: string; p_business_category_id: string; p_gstin?: string; p_email?: string }; Returns: Database["public"]["Tables"]["vendors"]["Row"] };
       search_products: { Args: { p_lat: number; p_lng: number; p_query: string; p_radius_km?: number; p_category_id?: string; p_min_price?: number; p_max_price?: number; p_in_stock_only?: boolean; p_limit?: number; p_offset?: number }; Returns: { product_id: string; product_name: string; product_name_te: string; store_id: string; store_name: string; distance_m: number; variant_id: string; variant_label: string; price: number; sale_price: number; in_stock: boolean; image_path: string; store_is_open: boolean }[] };
+      set_default_address: { Args: { p_address_id: string }; Returns: undefined };
       start_cart: { Args: { p_store_id: string }; Returns: string };
       store_is_public: { Args: { p_store_id: string }; Returns: boolean };
+      store_summary: { Args: { p_store_id: string; p_lat?: number; p_lng?: number }; Returns: Json };
       submit_review: { Args: { p_order_id: string; p_target: Database["public"]["Enums"]["review_target"]; p_rating: number; p_body?: string; p_product_id?: string }; Returns: string };
       update_driver_location: { Args: { p_lat: number; p_lng: number; p_accuracy_m?: number; p_heading?: number; p_speed_mps?: number; p_recorded_at?: string }; Returns: Json };
       valid_opening_hours: { Args: { h: Json }; Returns: boolean };

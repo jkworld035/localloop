@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { CartBar } from '@/components/shop/CartBar';
 import { AppText, Banner, Chip, EmptyState, ErrorState, LoadingState, Screen } from '@/components/ui';
 import { useAreaStatus, useCategories, useNearbyStores, type StoreSort } from '@/features/discovery/api';
 import { StoreCard } from '@/features/discovery/StoreCard';
@@ -28,6 +29,7 @@ export default function Home() {
   const nextRadius = SEARCH_RADII_KM.find((r) => r > radiusKm);
 
   return (
+    <View style={styles.flex}>
     <Screen refreshing={stores.isRefetching} onRefresh={() => void stores.refetch()}>
       {/* Location header */}
       <Pressable
@@ -94,6 +96,8 @@ export default function Home() {
         </View>
       )}
     </Screen>
+    <CartBar />
+    </View>
   );
 }
 

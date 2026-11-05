@@ -83,7 +83,12 @@
     "eta_range": "{{min}}–{{max}} min",
     "ratings": "{{rating}} ({{count}})",
     "new_store": "New",
-    "filters": { "nearest": "Nearest", "rating": "Top rated", "fastest": "Fastest", "open_now": "Open now" }
+    "filters": {
+      "nearest": "Nearest",
+      "rating": "Top rated",
+      "fastest": "Fastest",
+      "open_now": "Open now"
+    }
   },
   "tabs": {
     "home": "Home",
@@ -92,14 +97,21 @@
     "wishlist": "Saved",
     "profile": "Profile"
   },
-  "categories": { "title": "Categories", "shops": "Shop types", "products": "Product types" },
+  "categories": {
+    "title": "Categories",
+    "shops": "Shop types",
+    "products": "Product types"
+  },
   "orders": {
     "title": "Your orders",
     "empty": "You haven't ordered yet.",
     "start_shopping": "Find shops near you",
     "placed_on": "Placed {{date}}"
   },
-  "wishlist": { "title": "Saved", "empty": "Tap the heart on a shop or product to save it here." },
+  "wishlist": {
+    "title": "Saved",
+    "empty": "Tap the heart on a shop or product to save it here."
+  },
   "profile": {
     "title": "Profile",
     "name": "Name",
@@ -111,7 +123,10 @@
     "role_vendor": "Shop owner account",
     "role_delivery_partner": "Delivery partner account"
   },
-  "language": { "en": "English", "te": "తెలుగు" },
+  "language": {
+    "en": "English",
+    "te": "తెలుగు"
+  },
   "vendor": {
     "register_title": "Tell us about your business",
     "owner_name": "Owner name",
@@ -155,7 +170,12 @@
     "tracking_notification_title": "LocalLoop delivery in progress",
     "tracking_notification_body": "Sharing your location with the customer"
   },
-  "vehicles": { "bicycle": "Bicycle", "scooter": "Scooter", "motorcycle": "Motorcycle", "car": "Car" },
+  "vehicles": {
+    "bicycle": "Bicycle",
+    "scooter": "Scooter",
+    "motorcycle": "Motorcycle",
+    "car": "Car"
+  },
   "order_status": {
     "placed": "Placed",
     "accepted": "Accepted",
@@ -167,7 +187,14 @@
     "cancelled": "Cancelled"
   },
   "units": {
-    "piece": "piece", "kg": "kg", "g": "g", "l": "L", "ml": "ml", "packet": "packet", "box": "box", "dozen": "dozen"
+    "piece": "piece",
+    "kg": "kg",
+    "g": "g",
+    "l": "L",
+    "ml": "ml",
+    "packet": "packet",
+    "box": "box",
+    "dozen": "dozen"
   },
   "tracking": {
     "live": "Live",
@@ -292,5 +319,128 @@
     "cannot_change_own_role": "You can't change your own admin role.",
     "routing_not_configured": "Live arrival time isn't available yet.",
     "routing_failed": "Couldn't update the arrival time. Retrying."
+  },
+  "shop": {
+    "add": "Add",
+    "all": "All",
+    "options": "Options",
+    "choose_size": "Choose size",
+    "sizes": "{{count}} sizes",
+    "in_cart": "{{count}} in cart",
+    "closed_now": "This shop is closed right now. You can browse; ordering opens when it reopens.",
+    "closed_today": "Closed today",
+    "hours_today": "Today {{hours}}",
+    "paused": "This shop isn't taking orders right now.",
+    "not_delivering": "This shop doesn't deliver to your selected location.",
+    "description": "About this product",
+    "mrp": "MRP",
+    "off": "{{percent}}% off",
+    "no_match": "No products match “{{query}}”.",
+    "no_products": "This shop hasn't added products yet.",
+    "only_left_one": "Only {{count}} left",
+    "only_left_other": "Only {{count}} left",
+    "out_of_stock": "Out of stock",
+    "open_product": "Opens product details",
+    "photo": "Photo {{index}} of {{total}}",
+    "save": "Save",
+    "unsave": "Remove from saved",
+    "search_in_store": "Search in this shop"
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is empty.",
+    "view_cart": "View cart",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items",
+    "from_store": "From {{store}}",
+    "add_more": "Add more items",
+    "replace_title": "Start a new cart?",
+    "replace_body": "Your cart has items from {{store}}. Adding this will remove them.",
+    "replace_confirm": "Start new cart",
+    "quantity_label": "quantity {{count}}",
+    "increase": "Increase quantity",
+    "decrease": "Decrease quantity",
+    "bill": "Bill details",
+    "subtotal": "Item total",
+    "delivery_fee": "Delivery fee",
+    "free": "Free",
+    "fee_after_address": "Calculated at checkout",
+    "tax": "GST on delivery",
+    "discount": "Discount",
+    "total": "To pay",
+    "coupon": "Coupon code",
+    "apply": "Apply",
+    "remove": "Remove",
+    "min_order_hint": "Add ₹{{amount}} more to reach this shop's minimum order.",
+    "checkout": "Proceed to checkout"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "deliver_to": "Deliver to",
+    "needs_address": "Add a delivery address to continue.",
+    "instructions": "Delivery instructions",
+    "instructions_hint": "For example: ring the bell, leave at the gate",
+    "payment": "Payment",
+    "cod_hint": "Pay in cash when your order arrives.",
+    "test_hint": "For testing only. No money is charged.",
+    "place_order": "Place order · {{total}}",
+    "place_order_plain": "Place order"
+  },
+  "payment_method": {
+    "cod": "Cash on delivery",
+    "test": "Test payment",
+    "razorpay": "Online payment"
+  },
+  "payment_status": {
+    "pending": "To be paid",
+    "paid": "Paid",
+    "failed": "Not charged",
+    "refunded": "Refunded"
+  },
+  "address": {
+    "title": "Saved addresses",
+    "add": "Add new address",
+    "empty": "No saved addresses yet.",
+    "select": "Deliver here",
+    "default_badge": "Default",
+    "set_default": "Set as default",
+    "delete": "Delete",
+    "delete_confirm": "Delete this address?",
+    "location": "Location on map",
+    "using_location": "Using your current location",
+    "pin_set": "Pin placed on the map",
+    "no_location": "Place the pin on the map first.",
+    "adjust_pin": "Adjust pin",
+    "line1": "House / flat / building",
+    "line2": "Street / area",
+    "landmark": "Landmark",
+    "locality": "Locality",
+    "city": "Town / city",
+    "state": "State",
+    "pincode": "PIN code",
+    "contact_name": "Name for delivery",
+    "contact_phone": "Phone for delivery",
+    "label": "Save as",
+    "label_hint": "For example: Home, Work, Shop",
+    "default": "Make this my default address",
+    "save": "Save address"
+  },
+  "order": {
+    "title": "Order details",
+    "placed_title": "Order placed!",
+    "placed_body": "We've sent your order to {{store}}. You'll be notified when they accept it.",
+    "continue_shopping": "Continue shopping",
+    "prep_eta": "The shop will have it ready in about {{minutes}} min.",
+    "reason": "Reason: {{reason}}",
+    "otp_title": "Delivery code",
+    "otp_hint": "Share this code with the delivery partner only when you receive your order.",
+    "timeline": "Status",
+    "live_updates": "This page updates automatically.",
+    "items": "Items",
+    "delivery": "Delivery & payment",
+    "cancel": "Cancel order",
+    "cancel_confirm_title": "Cancel this order?",
+    "cancel_confirm_body": "The shop hasn't accepted it yet, so you can cancel at no cost.",
+    "cancel_reason_default": "Cancelled by customer"
   }
 }

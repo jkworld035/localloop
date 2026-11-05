@@ -43,7 +43,7 @@ fks = q("""
   select con.conname as name, rel.relname as table_name,
          array_agg(att.attname order by k.ord) as columns,
          frel.relname as ref_table, array_agg(fatt.attname order by k.ord) as ref_columns,
-         exists (select 1 from pg_index i where i.indrelid = con.conrelid and i.indisunique
+         exists (select 1 from pg_index i where i.indrelid = con.conrelid and i.indisunique and i.indpred is null
                    and (i.indkey::int2[])::int2[] @> con.conkey and array_length(con.conkey,1) = i.indnkeyatts) as one_to_one
     from pg_constraint con
     join pg_class rel on rel.oid = con.conrelid join pg_namespace n on n.oid = rel.relnamespace

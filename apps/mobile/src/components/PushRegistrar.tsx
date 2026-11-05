@@ -21,8 +21,7 @@ export function PushRegistrar() {
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener((response) => {
       const data = response.notification.request.content.data as { order_id?: string; type?: string };
-      // Order detail and tracking screens arrive in Phase 2; until then land on the order list.
-      if (data.order_id && profile?.role === 'customer') router.push('/orders');
+      if (data.order_id && profile?.role === 'customer') router.push({ pathname: '/order/[id]', params: { id: data.order_id } });
     });
     return () => sub.remove();
   }, [profile?.role]);

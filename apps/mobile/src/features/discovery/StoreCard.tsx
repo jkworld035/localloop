@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { colors, formatDistance, radii, spacing, type RpcReturns } from '@localloop/shared';
 import { Image } from 'expo-image';
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { AppText, Card } from '@/components/ui';
@@ -27,7 +28,11 @@ export function StoreCard({ store }: { store: NearbyStore }) {
   ].join(', ');
 
   return (
-    <Card style={styles.card} accessible accessibilityLabel={summary}>
+    <Card
+      style={styles.card}
+      accessibilityLabel={summary}
+      onPress={() => router.push({ pathname: '/store/[id]', params: { id: store.id } })}
+    >
       <View style={styles.row}>
         {cover ? (
           <Image source={{ uri: cover }} style={styles.image} contentFit="cover" transition={150} accessibilityIgnoresInvertColors />

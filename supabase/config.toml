@@ -33,7 +33,7 @@ enable_refresh_token_rotation = true
 enable_signup = true
 
 [auth.sms]
-enable_signup = true
+enabled = true
 enable_confirmations = true
 max_frequency = "60s"
 template = "Your LocalLoop code is {{ .Code }}. Do not share it with anyone."
@@ -46,7 +46,7 @@ template = "Your LocalLoop code is {{ .Code }}. Do not share it with anyone."
 919000000005 = "123456"
 
 [auth.email]
-enable_signup = true
+enabled = true
 enable_confirmations = false
 
 [auth.rate_limit]

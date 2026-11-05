@@ -14,18 +14,18 @@ supabase/          Migrations, RLS, RPCs, pgTAP tests, edge functions, local see
 docs/              architecture · database · setup · deployment · testing
 ```
 
-## Status — Phase 1 (foundation) complete
+## Status — Phase 2 (customer shopping) complete
 
 | Area | State |
 |---|---|
-| Database: 38 tables, PostGIS, RLS on every table, 42 client RPCs, triggers, storage, realtime, cron | ✅ built and tested (104 pgTAP assertions) |
-| Order engine: pricing, idempotent placement, stock locking, state machine, cancellations | ✅ backend complete and tested; customer screens in Phase 2 |
+| Database: 38 tables, PostGIS, RLS on every table, 42 client RPCs, triggers, storage, realtime, cron | ✅ built and tested (120 pgTAP assertions) |
+| Order engine: pricing, idempotent placement, stock locking, state machine, cancellations | ✅ backend and customer screens |
 | Dispatch + live tracking backend: offers, first-accept-wins, GPS ingestion, OTP handover, route ETA function | ✅ backend complete and tested; tracking screens in Phase 4 |
 | Auth: phone OTP, role choice, encrypted session storage | ✅ |
-| Customer app: onboarding, language, GPS location + map pin, nearby shops with radius/sort/open-now, categories, orders, saved, profile | ✅ (shop pages, cart, checkout: Phase 2) |
+| Customer app: onboarding, language, GPS location + map pin, nearby shops, shop & product pages, cart, addresses, Cash-on-Delivery checkout, live order status with delivery code, order history, saved items | ✅ (live map tracking: Phase 4) |
 | Vendor app: registration, verification status, today's order counts | ✅ (shop/products/orders: Phase 3) |
 | Partner app: registration, verification, go online/offline with GPS + background tracking task | ✅ (offers, navigation, OTP screens: Phase 4) |
-| Admin: secure sign-in, overview metrics, approvals, platform settings, audit log | ✅ (orders, live map, catalogue, coupons…: Phase 5) |
+| Admin: secure sign-in (with specific failure reasons), overview metrics, approvals, platform settings, audit log | ✅ (orders, live map, catalogue, coupons…: Phase 5) |
 | Push notifications (EN/TE templates, Expo push, token lifecycle) | ✅ code complete; needs EAS/FCM/APNs credentials |
 | Store builds | ⏳ EAS profiles ready; needs owner accounts (see docs/setup.md §1) |
 

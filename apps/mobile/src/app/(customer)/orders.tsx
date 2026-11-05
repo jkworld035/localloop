@@ -31,7 +31,7 @@ export default function Orders() {
       ) : (
         <View style={styles.list}>
           {orders.data.map((o) => (
-            <Card key={o.id}>
+            <Card key={o.id} onPress={() => router.push({ pathname: '/order/[id]', params: { id: o.id } })}>
               <View style={styles.row}>
                 <AppText weight="bold" style={styles.flex} numberOfLines={1}>
                   {(te && o.store?.name_te) || o.store?.name}

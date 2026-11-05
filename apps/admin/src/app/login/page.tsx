@@ -1,4 +1,13 @@
-import { signIn } from './actions';
+import { signIn, type SignInError } from './actions';
+
+const MESSAGES: Record<SignInError, string> = {
+  invalid: 'Email or password is incorrect.',
+  unconfirmed: 'This account’s email isn’t confirmed yet. Confirm it in Supabase → Authentication → Users.',
+  network:
+    'The dashboard server can’t reach Supabase. Check your internet connection. Some Indian networks block supabase.co — try another network or Cloudflare WARP.',
+  forbidden: 'This account is not an administrator.',
+  unknown: 'Sign-in failed for an unexpected reason. Check the server log and try again.',
+};
 
 export const metadata = { title: 'Sign in' };
 
@@ -13,7 +22,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </div>
         {error && (
           <p role="alert" className="rounded-lg bg-bad-bg px-3 py-2 text-sm text-bad">
-            {error === 'forbidden' ? 'This account is not an administrator.' : 'Email or password is incorrect.'}
+            {MESSAGES[(error in MESSAGES ? error : 'unknown') as SignInError]}
           </p>
         )}
         <label className="block space-y-1.5">

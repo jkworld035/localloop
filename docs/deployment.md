@@ -7,6 +7,15 @@ only the owner can provide are marked **(owner)**.
 See `setup.md` §4. Use a Supabase **branch** or separate staging project for
 preview builds; never point preview builds at production data.
 
+### Launch risk: `supabase.co` blocked on some Indian networks
+In February 2026 several Indian ISPs blocked `supabase.co` after a government
+order; Supabase reported access restored in March, but some connections still
+reset (seen during this project's setup in November 2026). If a customer's ISP
+blocks it, the app cannot load anything. Before launch, serve the API from your
+own domain (for example `api.localloop.in`) with Supabase's **Custom Domains**
+add-on, then set `EXPO_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_URL` to it.
+Developers on an affected network can use Cloudflare WARP meanwhile.
+
 ## Mobile (EAS)
 Profiles in `apps/mobile/eas.json`:
 

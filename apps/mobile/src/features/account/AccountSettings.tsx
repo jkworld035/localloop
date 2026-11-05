@@ -45,7 +45,10 @@ export function AccountSettings({ showLocation }: { showLocation?: boolean }) {
       </Card>
 
       {showLocation && (
-        <Button label={t('location.title')} variant="secondary" icon="location-outline" onPress={() => router.push('/location')} />
+        <>
+          <Button label={t('address.title')} variant="secondary" icon="home-outline" onPress={() => router.push('/addresses')} />
+          <Button label={t('location.title')} variant="secondary" icon="location-outline" onPress={() => router.push('/location')} />
+        </>
       )}
 
       <Button label={t('common.sign_out')} variant="danger" icon="log-out-outline" loading={signOut.isPending} onPress={() => signOut.mutate()} />

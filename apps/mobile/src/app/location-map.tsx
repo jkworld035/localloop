@@ -8,6 +8,7 @@ import MapView, { PROVIDER_GOOGLE, type Region } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Banner, Button } from '@/components/ui';
 import { labelFor } from '@/services/location';
+import { useAddressDraft } from '@/stores/checkout';
 import { useSelectedLocation } from '@/stores/location';
 
 /**
@@ -17,7 +18,8 @@ import { useSelectedLocation } from '@/stores/location';
  */
 export default function LocationMap() {
   const { t } = useTranslation();
-  const params = useLocalSearchParams<{ lat?: string; lng?: string }>();
+  const params = useLocalSearchParams<{ lat?: string; lng?: string; purpose?: string }>();
+  const setAddressPoint = useAddressDraft((s) => s.setPoint);
   const select = useSelectedLocation((s) => s.select);
   const start =
     params.lat && params.lng
@@ -32,6 +34,12 @@ export default function LocationMap() {
     center.longitude <= INDIA_BOUNDS.maxLng;
 
   const confirm = async () => {
+    // Placing the pin for a new delivery address: hand the point back to the form.
+    if (params.purpose === 'address') {
+      setAddressPoint({ latitude: center.latitude, longitude: center.longitude });
+      router.back();
+      return;
+    }
     setSaving(true);
     select({
       latitude: center.latitude,
