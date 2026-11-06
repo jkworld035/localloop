@@ -15,6 +15,7 @@ import { sellableVariants, useStoreProducts, useStoreSummary, type CatalogProduc
 import { useCartQuantities } from '@/features/cart/api';
 import { useAddToCart } from '@/features/cart/useAddToCart';
 import { publicImageUrl } from '@/features/discovery/api';
+import { StoreReviews } from '@/features/reviews/StoreReviews';
 import { useSelectedLocation } from '@/stores/location';
 
 export default function StorePage() {
@@ -155,6 +156,7 @@ export default function StorePage() {
         sections={sections}
         keyExtractor={(p) => p.id}
         ListHeaderComponent={header}
+        ListFooterComponent={<StoreReviews storeId={s.id} />}
         stickySectionHeadersEnabled={false}
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"

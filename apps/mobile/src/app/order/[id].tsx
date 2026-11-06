@@ -9,6 +9,8 @@ import { AppText, Banner, Button, Card, ErrorState, LoadingState, Screen } from 
 import { OrderStatusBadge } from '@/features/orders/OrderStatusBadge';
 import { useCancelOrder, useDeliveryOtp, useOrder, useOrderRealtime } from '@/features/orders/api';
 import { errorMessage } from '@/lib/errors';
+import { StarRating } from '@/components/StarRating';
+import { useReviewState } from '@/features/reviews/api';
 
 /** Happy-path steps shown as a progress list; rejected/cancelled show as a single closing state. */
 const STEPS: OrderStatus[] = ['placed', 'accepted', 'preparing', 'ready_for_pickup', 'picked_up', 'delivered'];
@@ -108,6 +110,8 @@ export default function OrderDetail() {
         )
       )}
 
+      {o.status === 'delivered' && <RateCard orderId={id} storeName={storeName} />}
+
       {/* Delivery code: shown only while the order is open */}
       {open && otp.data && (
         <Card style={styles.otpCard}>
@@ -191,10 +195,42 @@ export default function OrderDetail() {
         </View>
       </Card>
 
+      <Button
+        label={t('support.help_with_order')}
+        variant="secondary"
+        icon="chatbubbles-outline"
+        onPress={() => router.push({ pathname: '/support/new', params: { orderId: id, orderNumber: o.order_number } })}
+      />
+
       {o.status === 'placed' && (
         <Button label={t('order.cancel')} variant="danger" icon="close-circle-outline" loading={cancel.isPending} onPress={confirmCancel} />
       )}
     </Screen>
+  );
+}
+
+/** After delivery: invite a rating, or show the one given. */
+function RateCard({ orderId, storeName }: { orderId: string; storeName: string }) {
+  const { t } = useTranslation();
+  const state = useReviewState(orderId);
+  if (!state.data) return null;
+  const s = state.data;
+  const open = () => router.push({ pathname: '/review/[orderId]', params: { orderId, storeName } });
+  if (s.store) {
+    const more = (s.has_partner && !s.partner) || s.products.some((p) => !p.rating);
+    return (
+      <Card>
+        <StarRating value={s.store.rating} label={t('reviews.your_rating')} size={24} />
+        {more && s.can_review && <Button label={t('reviews.rate_more')} variant="ghost" compact onPress={open} />}
+      </Card>
+    );
+  }
+  if (!s.can_review) return null;
+  return (
+    <Card style={styles.rateCard}>
+      <AppText weight="bold">{t('reviews.prompt', { store: storeName })}</AppText>
+      <Button label={t('reviews.rate_order')} icon="star-outline" onPress={open} />
+    </Card>
   );
 }
 
@@ -224,6 +260,7 @@ const styles = StyleSheet.create({
   placed: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xl },
   rowBetween: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: spacing.md },
   flex: { flex: 1 },
+  rateCard: { borderColor: colors.brand.amber, borderWidth: 2 },
   otpCard: { alignItems: 'center', borderColor: colors.brand.forest, borderWidth: 2 },
   otp: { letterSpacing: 12 },
   step: { flexDirection: 'row', gap: spacing.md, minHeight: 44 },

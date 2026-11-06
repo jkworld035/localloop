@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText } from './ui';
 
-/** Top bar with a back button (falls back to Home when opened from a notification) and an optional title. */
+/** Top bar with a back button (falls back to the role's home when opened from a notification) and an optional title. */
 export function BackRow({ title }: { title?: string }) {
   const { t } = useTranslation();
   return (
@@ -13,7 +13,7 @@ export function BackRow({ title }: { title?: string }) {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('common.back')}
-        onPress={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
+        onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
         hitSlop={8}
         style={styles.backButton}
       >

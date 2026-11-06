@@ -4,6 +4,8 @@
  * `errors.generic`. Keep in sync with the RAISE statements in the migrations.
  */
 export const ERROR_CODES = [
+  'ticket_too_short', 'too_many_open_tickets', 'ticket_not_found', 'ticket_closed', 'open_orders', 'cash_not_settled',
+  'deletion_incomplete',
   'not_authenticated', 'account_inactive', 'wrong_role', 'forbidden', 'invalid_coordinates',
   'role_not_allowed', 'role_already_set', 'invalid_category', 'vendor_locked', 'partner_locked',
   'query_too_short', 'cart_empty', 'address_not_found', 'store_unavailable', 'store_paused', 'store_closed',

@@ -55,6 +55,9 @@ sms_sent = 30
 [functions.compute-eta]
 verify_jwt = true
 
+[functions.delete-account]
+verify_jwt = true
+
 [functions.send-push]
 verify_jwt = false # authorised inside the function against the service-role key
 

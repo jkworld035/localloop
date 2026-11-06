@@ -88,7 +88,8 @@
       "rating": "Top rated",
       "fastest": "Fastest",
       "open_now": "Open now"
-    }
+    },
+    "order_again": "Order again"
   },
   "tabs": {
     "home": "Home",
@@ -470,7 +471,10 @@
     "delivery_partners_rejected": "Verification needs changes",
     "delivery_partners_suspended": "Partner account suspended",
     "payout_sent": "Payout of ₹{{amount}} sent ({{reference}})",
-    "support_reply": "Support replied: {{subject}}"
+    "support_reply": "Support replied: {{subject}}",
+    "generic": "You have an update",
+    "unread_one": "Notifications, {{count}} unread",
+    "unread_other": "Notifications, {{count}} unread"
   },
   "validation": {
     "required": "This field is required.",
@@ -562,7 +566,14 @@
     "product_not_found": "This product no longer exists.",
     "variant_required": "Add at least one size or pack.",
     "duplicate_size_label": "Two sizes have the same name. Give each size a different name.",
-    "invalid_product_values": "Some values aren't valid. Check prices (offer price must be below MRP) and quantities."
+    "invalid_product_values": "Some values aren't valid. Check prices (offer price must be below MRP) and quantities.",
+    "ticket_too_short": "Please add a short summary and a few more details.",
+    "too_many_open_tickets": "You already have 5 open requests. We'll reply to those first.",
+    "ticket_not_found": "This conversation was not found.",
+    "ticket_closed": "This conversation is closed. Please start a new one.",
+    "open_orders": "You have orders in progress. Delete your account after they are delivered or cancelled.",
+    "cash_not_settled": "Hand over the cash you collected on delivery before deleting your account.",
+    "deletion_incomplete": "Your data was removed but sign-in deletion didn't finish. Please try again."
   },
   "shop": {
     "add": "Add",
@@ -703,5 +714,100 @@
     "fri": "Friday",
     "sat": "Saturday",
     "sun": "Sunday"
+  },
+  "support": {
+    "title": "Help & support",
+    "intro": "Ask us about an order, a payment, your account or anything else. We reply here and send you a notification.",
+    "new": "Ask for help",
+    "empty": "You haven't asked for help yet.",
+    "status": {
+      "open": "Waiting for us",
+      "in_progress": "We're on it",
+      "resolved": "Resolved",
+      "closed": "Closed"
+    },
+    "categories": {
+      "order": "An order",
+      "delivery": "Delivery",
+      "payment": "Payment",
+      "refund": "Refund",
+      "store": "My shop",
+      "account": "My account",
+      "other": "Something else"
+    },
+    "about_order": "About order {{order}}",
+    "topic": "What is it about?",
+    "subject": "Short summary",
+    "message": "Tell us what happened",
+    "message_hint": "Include what you expected and what went wrong (at least 10 characters).",
+    "send": "Send",
+    "reply_time": "We usually reply within a few hours, 9 am – 9 pm.",
+    "view_order": "View order {{order}}",
+    "team": "LocalLoop support",
+    "you": "You",
+    "closed_hint": "This conversation is closed. Start a new one if you still need help.",
+    "reply": "Your reply",
+    "help_with_order": "Get help with this order"
+  },
+  "reviews": {
+    "stars_one": "{{count}} star",
+    "stars_other": "{{count}} stars",
+    "thanks_title": "Thank you!",
+    "thanks_body": "Your rating helps neighbours choose good shops and helps shops improve.",
+    "title": "Rate your order",
+    "window_closed": "Ratings can be given up to 30 days after delivery.",
+    "store_question": "How was {{store}}?",
+    "store": "Shop rating",
+    "comment": "Comment",
+    "comment_hint": "What did you like? What could be better?",
+    "partner_question": "How was the delivery by {{name}}?",
+    "partner": "Delivery rating",
+    "products": "Rate the products",
+    "submit": "Submit rating",
+    "your_rating": "Your rating",
+    "rate_more": "Rate the products and delivery",
+    "prompt": "How was your order from {{store}}?",
+    "rate_order": "Rate this order",
+    "report_title": "Report this review",
+    "report_body": "Why should we check it?",
+    "report_reasons": {
+      "not_about_shop": "Not about this shop",
+      "abusive": "Abusive or offensive",
+      "spam": "Spam or fake"
+    },
+    "store_reviews": "What customers say",
+    "customer": "Customer",
+    "verified": "Verified order",
+    "reported": "Reported",
+    "report": "Report"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search for rice, milk, bread…",
+    "clear": "Clear search",
+    "hint": "Type at least 2 letters to search products in shops near you.",
+    "none": "Nothing found for “{{query}}” nearby.",
+    "closed": "Closed now",
+    "out_of_stock": "Out of stock"
+  },
+  "legal": {
+    "english_only": "These documents are in English for now. Our support team can explain them in Telugu.",
+    "title": "Legal",
+    "terms": "Terms of use",
+    "privacy": "Privacy policy",
+    "refunds": "Cancellation & refund policy",
+    "version": "App version {{version}}"
+  },
+  "account_delete": {
+    "title": "Delete account",
+    "what_happens": "What happens",
+    "point_personal": "Your name, phone number, photo, addresses, wishlist and notifications are deleted.",
+    "point_signin": "You are signed out and can no longer sign in with this account.",
+    "point_shop": "If you run a shop, it is removed from the app. Delivery partners stop receiving requests.",
+    "point_records": "Past orders and payments are kept without your name or phone, as tax law requires.",
+    "cannot_undo": "This cannot be undone. Finish or cancel open orders first.",
+    "type_delete": "Type DELETE to confirm",
+    "confirm": "Delete my account",
+    "help": "Having trouble? Contact Help & support before deleting — we may be able to fix it."
   }
 }

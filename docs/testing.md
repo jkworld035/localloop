@@ -74,6 +74,15 @@ can't revoke PostgreSQL's global grant (now an explicit allowlist).
 
 **Not yet exercised against the hosted project:** the admin pages were type-checked against the generated schema and built, but not clicked through with live data — do that after applying the patch.
 
+## Phase 6 test report — 6 Nov 2026
+
+| Suite | Result | What it proves |
+|---|---|---|
+| `09_engagement` (pgTAP) | **23/23 pass** | Help requests need a real message, can only attach the user's own orders, refunds get high priority, at most five open per person; staff replies notify the user, a user reply reopens a resolved ticket, nobody else can reply; vendors can ask too. Ratings only after delivery, partner shown by first name, products listed; shop reviews are public with first names only and hidden reviews disappear. Account closure is refused while a partner holds COD cash; a customer's closure removes name, phone and addresses and blocks sign-in while keeping the order without the phone number |
+| All earlier suites | **178/178 pass** | Unchanged behaviour |
+| Unit (vitest) | **37/37 pass** | New: notification taps route each role to the right screen; every new string has a Telugu translation |
+| Typecheck · admin build (incl. 4 static `/legal` pages) · Android bundle | **pass** | Public privacy page rendered and checked at phone width |
+
 ## Not yet verified — needs real devices and credentials
 These can't be exercised in CI and are on the device test plan (Phase 6/7):
 - Background GPS on physical Android (Doze, OEM battery savers — test Xiaomi/Realme/Samsung) and iOS (app killed, Low Power Mode)

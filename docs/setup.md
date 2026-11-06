@@ -82,7 +82,7 @@ When testing on a phone, replace `127.0.0.1` in `EXPO_PUBLIC_SUPABASE_URL` with 
 ```bash
 supabase link --project-ref YOUR-REF
 supabase db push                          # migrations only — seed.sql is never pushed
-supabase functions deploy compute-eta send-push razorpay-webhook
+supabase functions deploy compute-eta send-push razorpay-webhook delete-account
 supabase secrets set GOOGLE_ROUTES_API_KEY=… EXPO_ACCESS_TOKEN=…
 ```
 Then in the dashboard:

@@ -2211,6 +2211,8 @@ export type Database = {
       area_status: { Args: { p_lat: number; p_lng: number }; Returns: Json };
       can_view_order: { Args: { p_order_id: string }; Returns: boolean };
       choose_role: { Args: { p_role: Database["public"]["Enums"]["app_role"] }; Returns: Database["public"]["Enums"]["app_role"] };
+      close_my_account: { Args: Record<PropertyKey, never>; Returns: undefined };
+      create_support_ticket: { Args: { p_category: string; p_subject: string; p_body: string; p_order_id?: string }; Returns: string };
       current_app_role: { Args: Record<PropertyKey, never>; Returns: Database["public"]["Enums"]["app_role"] };
       customer_cancel_order: { Args: { p_order_id: string; p_reason: string }; Returns: undefined };
       demo_data_visible: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -2219,6 +2221,7 @@ export type Database = {
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_open_at: { Args: { h: Json; tz: string; at: string }; Returns: boolean };
       nearby_stores: { Args: { p_lat: number; p_lng: number; p_radius_km?: number; p_category_id?: string; p_open_now?: boolean; p_sort?: string; p_query?: string; p_limit?: number; p_offset?: number }; Returns: { id: string; name: string; name_te: string; category_id: string; category_name_en: string; category_name_te: string; logo_path: string; cover_path: string; locality: string; latitude: number; longitude: number; distance_m: number; is_open: boolean; is_accepting_orders: boolean; delivers_here: boolean; rating_avg: number; rating_count: number; min_order_value: number; est_minutes_min: number; est_minutes_max: number; opening_hours: Json; is_featured: boolean }[] };
+      order_review_state: { Args: { p_order_id: string }; Returns: Json };
       owns_product: { Args: { p_product_id: string }; Returns: boolean };
       owns_store: { Args: { p_store_id: string }; Returns: boolean };
       partner_accept_assignment: { Args: { p_assignment_id: string }; Returns: Json };
@@ -2234,10 +2237,12 @@ export type Database = {
       quote_cart: { Args: { p_address_id?: string; p_coupon_code?: string }; Returns: Json };
       register_delivery_partner: { Args: { p_full_name: string; p_vehicle_type: Database["public"]["Enums"]["vehicle_type"]; p_vehicle_registration?: string; p_driving_licence?: string; p_email?: string }; Returns: Database["public"]["Tables"]["delivery_partners"]["Row"] };
       register_vendor: { Args: { p_owner_name: string; p_business_name: string; p_business_category_id: string; p_gstin?: string; p_email?: string }; Returns: Database["public"]["Tables"]["vendors"]["Row"] };
+      reply_support_ticket: { Args: { p_ticket_id: string; p_body: string }; Returns: undefined };
       search_products: { Args: { p_lat: number; p_lng: number; p_query: string; p_radius_km?: number; p_category_id?: string; p_min_price?: number; p_max_price?: number; p_in_stock_only?: boolean; p_limit?: number; p_offset?: number }; Returns: { product_id: string; product_name: string; product_name_te: string; store_id: string; store_name: string; distance_m: number; variant_id: string; variant_label: string; price: number; sale_price: number; in_stock: boolean; image_path: string; store_is_open: boolean }[] };
       set_default_address: { Args: { p_address_id: string }; Returns: undefined };
       start_cart: { Args: { p_store_id: string }; Returns: string };
       store_is_public: { Args: { p_store_id: string }; Returns: boolean };
+      store_reviews: { Args: { p_store_id: string; p_limit?: number; p_offset?: number }; Returns: { id: string; rating: number; body: string; author: string; created_at: string }[] };
       store_summary: { Args: { p_store_id: string; p_lat?: number; p_lng?: number }; Returns: Json };
       submit_review: { Args: { p_order_id: string; p_target: Database["public"]["Enums"]["review_target"]; p_rating: number; p_body?: string; p_product_id?: string }; Returns: string };
       update_driver_location: { Args: { p_lat: number; p_lng: number; p_accuracy_m?: number; p_heading?: number; p_speed_mps?: number; p_recorded_at?: string }; Returns: Json };

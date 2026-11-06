@@ -56,3 +56,24 @@ export function useSignOut() {
     },
   });
 }
+
+/**
+ * Permanently closes the account (server: delete-account function). Refuses
+ * with a business code while orders, a delivery or COD cash are open.
+ */
+export function useDeleteAccount() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.functions.invoke('delete-account', { body: {} });
+      if (error) {
+        const body = await (error as { context?: Response }).context?.json?.().catch(() => null);
+        throw new Error((body as { error?: string } | null)?.error ?? 'generic');
+      }
+      await stopPartnerTracking().catch(() => undefined);
+      // The sign-in no longer exists; clear the local session without a server call.
+      await supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);
+      qc.clear();
+    },
+  });
+}

@@ -2,6 +2,7 @@ import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { useProfile } from '@/features/account/api';
+import { notificationTarget } from '@/lib/notificationTarget';
 import { registerForPush } from '@/services/push';
 
 /**
@@ -20,17 +21,9 @@ export function PushRegistrar() {
 
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener((response) => {
-      const data = response.notification.request.content.data as { order_id?: string; type?: string };
-      if (!data.order_id) return;
-      if (profile?.role === 'customer') {
-        // Out-for-delivery notifications open the live map; everything else the order page.
-        const live = data.type === 'order_picked_up' || data.type === 'partner_approaching';
-        router.push({ pathname: live ? '/track/[id]' : '/order/[id]', params: { id: data.order_id } });
-      } else if (profile?.role === 'vendor') {
-        router.push({ pathname: '/vendor/order/[id]', params: { id: data.order_id } });
-      } else if (profile?.role === 'delivery_partner') {
-        router.push('/partner');
-      }
+      const data = response.notification.request.content.data as Record<string, unknown>;
+      const to = notificationTarget(profile?.role, String(data.type ?? ''), data);
+      if (to) router.push(to);
     });
     return () => sub.remove();
   }, [profile?.role]);

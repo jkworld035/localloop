@@ -8,6 +8,8 @@ import { CartBar } from '@/components/shop/CartBar';
 import { AppText, Banner, Chip, EmptyState, ErrorState, LoadingState, Screen } from '@/components/ui';
 import { useAreaStatus, useCategories, useNearbyStores, type StoreSort } from '@/features/discovery/api';
 import { StoreCard } from '@/features/discovery/StoreCard';
+import { NotificationBell } from '@/features/notifications/NotificationBell';
+import { OrderAgain } from '@/features/orders/OrderAgain';
 import { useSelectedLocation } from '@/stores/location';
 
 export default function Home() {
@@ -31,7 +33,8 @@ export default function Home() {
   return (
     <View style={styles.flex}>
     <Screen refreshing={stores.isRefetching} onRefresh={() => void stores.refetch()}>
-      {/* Location header */}
+      {/* Location header + notifications */}
+      <View style={styles.headerRow}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`${t('home.deliver_to')}: ${location?.label ?? t('location.current')}. ${t('location.change')}`}
@@ -50,6 +53,19 @@ export default function Home() {
             <Ionicons name="chevron-down" size={18} color={colors.text.primary} />
           </View>
         </View>
+      </Pressable>
+      <NotificationBell />
+      </View>
+
+      {/* Search across shops */}
+      <Pressable
+        accessibilityRole="search"
+        accessibilityLabel={t('search.placeholder')}
+        onPress={() => router.push('/search')}
+        style={styles.searchBar}
+      >
+        <Ionicons name="search" size={22} color={colors.text.secondary} />
+        <AppText color={colors.text.muted}>{t('search.placeholder')}</AppText>
       </Pressable>
 
       {area.data && !area.data.serviceable && <Banner tone="info" message={t('location.not_serviceable')} />}
@@ -73,6 +89,8 @@ export default function Home() {
           />
         )}
       </ScrollView>
+
+      <OrderAgain />
 
       <AppText variant="title" weight="bold" accessibilityRole="header">
         {t('home.nearby_stores')}
@@ -102,7 +120,20 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  headerRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    minHeight: 52,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.surface.borderStrong,
+    backgroundColor: colors.surface.card,
+  },
   locationRow: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,

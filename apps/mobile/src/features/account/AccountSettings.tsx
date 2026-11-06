@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing } from '@localloop/shared';
+import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -51,8 +52,22 @@ export function AccountSettings({ showLocation }: { showLocation?: boolean }) {
         </>
       )}
 
+      <Button label={t('notifications.title')} variant="secondary" icon="notifications-outline" onPress={() => router.push('/notifications')} />
+      <Button label={t('support.title')} variant="secondary" icon="chatbubbles-outline" onPress={() => router.push('/support')} />
+
+      <Card>
+        <AppText weight="medium">{t('legal.title')}</AppText>
+        {(['terms', 'privacy', 'refunds'] as const).map((doc) => (
+          <Button key={doc} label={t(`legal.${doc}`)} variant="ghost" compact onPress={() => router.push({ pathname: '/legal/[doc]', params: { doc } })} />
+        ))}
+        <AppText variant="caption" color={colors.text.secondary}>
+          {t('legal.version', { version: Constants.expoConfig?.version ?? '' })}
+        </AppText>
+      </Card>
+
       <Button label={t('common.sign_out')} variant="danger" icon="log-out-outline" loading={signOut.isPending} onPress={() => signOut.mutate()} />
       {signOut.isError && <Banner tone="danger" message={errorMessage(signOut.error)} />}
+      <Button label={t('account_delete.title')} variant="ghost" compact icon="trash-outline" onPress={() => router.push('/account/delete')} />
     </View>
   );
 }

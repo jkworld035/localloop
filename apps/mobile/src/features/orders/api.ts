@@ -14,7 +14,7 @@ export function useMyOrders() {
       unwrap(
         await supabase
           .from('orders')
-          .select('id, order_number, status, total, placed_at, store:stores(name, name_te)')
+          .select('id, order_number, status, total, placed_at, store_id, store:stores(name, name_te)')
           .eq('customer_id', uid!)
           .order('placed_at', { ascending: false })
           .limit(50),
