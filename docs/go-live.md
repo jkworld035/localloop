@@ -16,7 +16,7 @@ Keep `localloop-dev` for testing; customers get their own project so test data n
    ```powershell
    npx supabase@latest link --project-ref <prod-ref>
    npx supabase@latest db push --remote
-   npx supabase@latest functions deploy compute-eta send-push razorpay-pay razorpay-webhook razorpay-refund delete-account --project-ref <prod-ref> --use-api
+   npx supabase@latest functions deploy compute-eta send-push razorpay-pay razorpay-webhook razorpay-refund delete-account admin-invite --project-ref <prod-ref> --use-api
    ```
 3. Secrets (type the values, never paste them in chat):
    ```powershell
@@ -28,9 +28,9 @@ Keep `localloop-dev` for testing; customers get their own project so test data n
    select cron.schedule('localloop-redispatch', '30 seconds', 'select public.expire_offers_and_redispatch()');
    select cron.schedule('localloop-purge-locations', '17 3 * * *', 'select public.purge_old_locations()');
    ```
-5. First admin: sign in once at the admin site with your email, then in SQL:
+5. First admin (once; after that add staff from Admin → Admin team): create your user in Supabase → Authentication → Add user (email + password, auto-confirm), sign in once at the admin site, then in SQL:
    `update public.profiles set role = 'admin' where email = '<you>'; insert into public.admin_users (id, admin_role) select id, 'super_admin' from public.profiles where email = '<you>';`
-6. Admin → Platform settings: commission, delivery fees, partner earnings, dispatch radius. Check the Kamareddy area: `select name, is_active from public.serviceable_areas;`
+6. Admin → Platform settings: commission, delivery fees, partner earnings, dispatch radius. Check the delivery area in Admin → Delivery areas (draw the exact town boundary if the circle is too loose).
 7. Auth → URL configuration and **Auth → Phone**: see §2.
 
 ## 2. Real SMS sign-in codes (India)

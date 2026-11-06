@@ -124,18 +124,21 @@ export type Database = {
           admin_role: Database["public"]["Enums"]["admin_role"];
           granted_by: string | null;
           created_at: string;
+          must_change_password: boolean;
         };
         Insert: {
           id: string;
           admin_role: Database["public"]["Enums"]["admin_role"];
           granted_by?: string | null;
           created_at?: string;
+          must_change_password?: boolean;
         };
         Update: {
           id?: string;
           admin_role?: Database["public"]["Enums"]["admin_role"];
           granted_by?: string | null;
           created_at?: string;
+          must_change_password?: boolean;
         };
         Relationships: [
           {
@@ -2265,19 +2268,25 @@ export type Database = {
     Functions: {
       _point: { Args: { p_lat: number; p_lng: number }; Returns: unknown };
       _uuid_or_null: { Args: { p: string }; Returns: string };
+      admin_areas: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_balances: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_can: { Args: { p_perm: string }; Returns: boolean };
       admin_cancel_order: { Args: { p_order_id: string; p_reason: string; p_restock?: boolean }; Returns: undefined };
+      admin_grant_role: { Args: { p_user_id: string; p_role: Database["public"]["Enums"]["admin_role"]; p_name?: string }; Returns: undefined };
       admin_live_map: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_overview: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_password_changed: { Args: Record<PropertyKey, never>; Returns: undefined };
       admin_record_vendor_payout: { Args: { p_vendor_id: string; p_expected: number; p_reference: string }; Returns: string };
       admin_redispatch: { Args: { p_order_id: string; p_release_partner?: boolean }; Returns: number };
       admin_refund_queue: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_reply_ticket: { Args: { p_ticket_id: string; p_body: string; p_status?: Database["public"]["Enums"]["ticket_status"] }; Returns: undefined };
       admin_retry_refund: { Args: { p_payment_id: string }; Returns: undefined };
+      admin_save_area: { Args: { p_id: string; p_name: string; p_city: string; p_state: string; p_lat: number; p_lng: number; p_radius_km: number; p_boundary?: Json; p_is_active?: boolean }; Returns: Json };
       admin_set_admin_role: { Args: { p_user_id: string; p_admin_role: Database["public"]["Enums"]["admin_role"] }; Returns: undefined };
       admin_set_user_active: { Args: { p_user_id: string; p_active: boolean; p_reason?: string }; Returns: undefined };
       admin_settle_partner_cash: { Args: { p_partner_id: string; p_expected: number; p_note?: string }; Returns: string };
+      admin_store_points: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_team: { Args: Record<PropertyKey, never>; Returns: Json };
       area_status: { Args: { p_lat: number; p_lng: number }; Returns: Json };
       can_view_order: { Args: { p_order_id: string }; Returns: boolean };
       choose_role: { Args: { p_role: Database["public"]["Enums"]["app_role"] }; Returns: Database["public"]["Enums"]["app_role"] };

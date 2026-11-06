@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { requireAdmin, roleCan, type Permission } from '@/lib/auth';
 import { NavLink } from '@/components/NavLink';
 import { signOut } from '../login/actions';
@@ -14,12 +15,16 @@ const NAV: { href: string; label: string; perm: Permission[] }[] = [
   { href: '/coupons', label: 'Coupons', perm: ['coupons'] },
   { href: '/finance', label: 'Finance', perm: ['payments', 'commissions'] },
   { href: '/health', label: 'App health', perm: ['orders'] },
+  { href: '/areas', label: 'Delivery areas', perm: ['areas'] },
+  { href: '/team', label: 'Admin team', perm: ['admins'] },
   { href: '/settings', label: 'Platform settings', perm: ['settings'] },
   { href: '/audit', label: 'Audit log', perm: ['audit'] },
 ];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const admin = await requireAdmin();
+  // Staff added with a one-time password choose their own before anything else.
+  if (admin.mustChangePassword) redirect('/account/password');
   const items = NAV.filter((n) => n.perm.some((p) => roleCan(admin.role, p)));
 
   return (
@@ -39,6 +44,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div className="border-t border-line pt-4 text-sm">
           <p className="font-medium">{admin.name}</p>
           <p className="text-ink-2">{admin.role.replace('_', ' ')}</p>
+          <a href="/account/password" className="mt-3 block font-medium text-forest hover:underline">
+            Change password
+          </a>
           <form action={signOut} className="mt-3">
             <button className="font-medium text-bad hover:underline">Sign out</button>
           </form>

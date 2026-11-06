@@ -40,11 +40,17 @@ export const requireAdmin = cache(async (perm?: Permission) => {
 
   const { data: admin } = await supabase
     .from('admin_users')
-    .select('admin_role, profile:profiles!admin_users_id_fkey(full_name, email, is_active, role)')
+    .select('admin_role, must_change_password, profile:profiles!admin_users_id_fkey(full_name, email, is_active, role)')
     .eq('id', user.id)
     .maybeSingle();
   if (!admin || !admin.profile?.is_active || admin.profile.role !== 'admin') redirect('/forbidden');
   if (perm && !roleCan(admin.admin_role, perm)) redirect('/forbidden');
 
-  return { supabase, userId: user.id, role: admin.admin_role, name: admin.profile.full_name ?? admin.profile.email ?? 'Admin' };
+  return {
+    supabase,
+    userId: user.id,
+    role: admin.admin_role,
+    name: admin.profile.full_name ?? admin.profile.email ?? 'Admin',
+    mustChangePassword: admin.must_change_password,
+  };
 });

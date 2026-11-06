@@ -105,6 +105,14 @@ can't revoke PostgreSQL's global grant (now an explicit allowlist).
 
 **Not yet exercised against Razorpay itself** — needs your test-mode keys (docs/payments.md → "Test it").
 
+## Admin tools test report — 7 Nov 2026
+
+| Suite | Result | What it proves |
+|---|---|---|
+| `12_admin_tools` (pgTAP) | **14/14 pass** | Areas list with shop counts; self-crossing boundaries and centres outside India are refused; drawing a boundary that leaves a shop outside moves it out of the area and customers there stop being served; switching back to a circle brings it back; area edits are audited. Team: a staff member is added with a role and name; shop owners' accounts can't become admins; nobody can remove their own access; operations admins can't manage the team |
+| All earlier suites | **230/230 pass** | |
+| Admin build · `deno check admin-invite` | **pass** | Area editor checked in a browser: drawing four points makes a closed polygon, the "shops inside" count updates, and the boundary is sent as GeoJSON |
+
 ## Not yet verified — needs real devices and credentials
 These can't be exercised in CI and are on the device test plan (Phase 6/7):
 - Background GPS on physical Android (Doze, OEM battery savers — test Xiaomi/Realme/Samsung) and iOS (app killed, Low Power Mode)
