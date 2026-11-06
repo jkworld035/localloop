@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { ORDER_STATUSES, ORDER_TRANSITIONS, canTransition } from './constants/order';
 import { decodePolyline, haversineMeters, parseEwkbPoint, toEwktPoint } from './utils/geo';
 import { formatDistance, formatINR } from './utils/format';
-import { locationFreshness } from './utils/freshness';
+import { arrivalEstimate, locationFreshness } from './utils/freshness';
 import { gstin, indianMobile, pincode } from './validation/common';
 import { partnerRegistrationSchema } from './validation/partner';
 import { variantSchema } from './validation/product';
@@ -85,5 +85,15 @@ describe('geo & format utils', () => {
     expect(locationFreshness('2026-11-05T09:59:00Z', now)).toBe('stale');
     expect(locationFreshness('2026-11-05T09:50:00Z', now)).toBe('lost');
     expect(locationFreshness(null, now)).toBe('lost');
+  });
+
+  it('shows an arrival estimate only while the position behind it is live', () => {
+    const now = new Date('2026-11-05T10:00:00Z');
+    const base = { eta_seconds: 600, eta_computed_at: '2026-11-05T09:58:00Z', location_at: '2026-11-05T09:59:55Z' };
+    expect(arrivalEstimate(base, now)?.minutes).toBe(8);
+    expect(arrivalEstimate({ ...base, location_at: '2026-11-05T09:58:00Z' }, now)).toBeNull();
+    expect(arrivalEstimate({ ...base, eta_seconds: null }, now)).toBeNull();
+    // Overdue estimates never show zero or negative minutes.
+    expect(arrivalEstimate({ ...base, eta_computed_at: '2026-11-05T09:40:00Z' }, now)?.minutes).toBe(1);
   });
 });

@@ -14,3 +14,18 @@ export function locationFreshness(recordedAt: string | Date | null, now: Date = 
   if (age <= TRACKING.lostAfterMs) return 'stale';
   return 'lost';
 }
+
+/**
+ * The customer-facing arrival estimate, or null when it shouldn't be shown:
+ * no routed ETA yet, or the partner position behind it is no longer live.
+ * The estimate counts down from when the server computed it.
+ */
+export function arrivalEstimate(
+  a: { eta_seconds: number | null; eta_computed_at: string | null; location_at: string | null },
+  now: Date = new Date(),
+): { arrival: Date; minutes: number } | null {
+  if (a.eta_seconds == null || !a.eta_computed_at) return null;
+  if (locationFreshness(a.location_at, now) !== 'live') return null;
+  const arrival = new Date(new Date(a.eta_computed_at).getTime() + a.eta_seconds * 1000);
+  return { arrival, minutes: Math.max(1, Math.ceil((arrival.getTime() - now.getTime()) / 60000)) };
+}

@@ -1,24 +1,15 @@
 import { colors, formatINR, radii, spacing } from '@localloop/shared';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Banner, Card, EmptyState, ErrorState, LoadingState } from '@/components/ui';
 import { OrderStatusBadge } from '@/features/orders/OrderStatusBadge';
 import { useMyStore, useVendorOrders, type OrderBucket } from '@/features/vendor/api';
+import { useNow } from '@/lib/useNow';
 
 const BUCKETS: OrderBucket[] = ['new', 'active', 'done'];
-
-/** Minutes since a timestamp, refreshed every 30 s so waiting times stay honest. */
-function useNow(intervalMs = 30_000) {
-  const [now, setNow] = useState(Date.now());
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), intervalMs);
-    return () => clearInterval(id);
-  }, [intervalMs]);
-  return now;
-}
 
 export default function VendorOrders() {
   const { t, i18n } = useTranslation();

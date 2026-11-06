@@ -2107,6 +2107,7 @@ export type Database = {
       partner_active_job: { Args: { p_assignment_id: string }; Returns: Json };
       partner_complete_delivery: { Args: { p_assignment_id: string; p_otp: string }; Returns: Json };
       partner_confirm_pickup: { Args: { p_assignment_id: string }; Returns: undefined };
+      partner_dashboard: { Args: Record<PropertyKey, never>; Returns: Json };
       partner_offers: { Args: Record<PropertyKey, never>; Returns: { assignment_id: string; order_id: string; order_number: string; expires_at: string; store_name: string; store_locality: string; store_latitude: number; store_longitude: number; distance_to_store_m: number; delivery_locality: string; trip_distance_m: number; item_count: number; payment_method: Database["public"]["Enums"]["payment_method"]; cash_to_collect: number }[] };
       partner_reject_assignment: { Args: { p_assignment_id: string }; Returns: undefined };
       partner_set_online: { Args: { p_online: boolean; p_lat?: number; p_lng?: number; p_accuracy_m?: number }; Returns: boolean };

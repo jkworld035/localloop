@@ -52,8 +52,17 @@ can't revoke PostgreSQL's global grant (now an explicit allowlist).
 
 **Bug caught in Phase 3:** the translation-key test ignored keys with digits (e.g. `vendor.sales_7d`), so a missing string could have shipped unnoticed.
 
+## Phase 4 test report — 6 Nov 2026
+
+| Suite | Result | What it proves |
+|---|---|---|
+| `07_partner` (pgTAP) | **18/18 pass** | The exact reads the partner app makes: open offer visible (realtime source), accept → active job with drop contact, order row readable; customer sees partner first name once assigned but **no position and no tracking row before pickup**, then the live position after pickup; OTP completion counts today's delivery, earning and COD cash in hand; documents only in the partner's own folder; customers can't read partner dashboards |
+| All earlier suites | **135/135 pass** | Unchanged behaviour |
+| Unit (vitest) | **34/34 pass** | New: the arrival estimate is hidden once the partner's position is no longer live, counts down from server compute time, and never shows 0 or negative minutes |
+| Typecheck · Android & iOS bundles | **pass** | Partner tabs (deliveries, history, profile), offer cards, job screen with map/route/navigation/OTP, documents, profile photo; customer live tracking screen and "Track live" on the order page |
+
 ## Not yet verified — needs real devices and credentials
-These can't be exercised in CI and are on the Phase 4/7 device test plan:
+These can't be exercised in CI and are on the device test plan (Phase 6/7):
 - Background GPS on physical Android (Doze, OEM battery savers — test Xiaomi/Realme/Samsung) and iOS (app killed, Low Power Mode)
 - Google Routes API responses for Kamareddy roads (needs the server key)
 - Push delivery via FCM/APNs (needs EAS credentials)

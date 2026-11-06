@@ -94,6 +94,20 @@ export default function OrderDetail() {
       {o.status === 'rejected' && o.rejection_reason && <Banner tone="danger" message={t('order.reason', { reason: o.rejection_reason })} />}
       {o.status === 'cancelled' && o.cancel_reason && <Banner tone="danger" message={t('order.reason', { reason: o.cancel_reason })} />}
 
+      {/* Live tracking: the map shows the partner once the order is picked up */}
+      {o.status === 'picked_up' ? (
+        <Button label={t('tracking.track_live')} icon="navigate" onPress={() => router.push({ pathname: '/track/[id]', params: { id } })} />
+      ) : (
+        ['accepted', 'preparing', 'ready_for_pickup'].includes(o.status) && (
+          <Button
+            label={t('tracking.view_progress')}
+            variant="secondary"
+            icon="map-outline"
+            onPress={() => router.push({ pathname: '/track/[id]', params: { id } })}
+          />
+        )
+      )}
+
       {/* Delivery code: shown only while the order is open */}
       {open && otp.data && (
         <Card style={styles.otpCard}>

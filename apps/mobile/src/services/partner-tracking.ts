@@ -122,7 +122,11 @@ export async function requestBackgroundPermission(): Promise<boolean> {
  * fixes at navigation accuracy. 'idle' while online and waiting for offers:
  * ~30 s / 50 m to save battery while keeping dispatch eligibility fresh.
  */
+let currentMode: Mode | null = null;
+
 export async function startPartnerTracking(mode: Mode) {
+  // Restarting the OS service needlessly drops fixes; only reconfigure when the mode changes.
+  if (currentMode === mode && (await Location.hasStartedLocationUpdatesAsync(PARTNER_LOCATION_TASK))) return;
   const active = mode === 'active';
   const options: Location.LocationTaskOptions = {
     accuracy: active ? Location.Accuracy.BestForNavigation : Location.Accuracy.Balanced,
@@ -142,9 +146,11 @@ export async function startPartnerTracking(mode: Mode) {
     await Location.stopLocationUpdatesAsync(PARTNER_LOCATION_TASK);
   }
   await Location.startLocationUpdatesAsync(PARTNER_LOCATION_TASK, options);
+  currentMode = mode;
 }
 
 export async function stopPartnerTracking() {
+  currentMode = null;
   if (await Location.hasStartedLocationUpdatesAsync(PARTNER_LOCATION_TASK)) {
     await Location.stopLocationUpdatesAsync(PARTNER_LOCATION_TASK);
   }

@@ -21,7 +21,16 @@ export function PushRegistrar() {
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener((response) => {
       const data = response.notification.request.content.data as { order_id?: string; type?: string };
-      if (data.order_id && profile?.role === 'customer') router.push({ pathname: '/order/[id]', params: { id: data.order_id } });
+      if (!data.order_id) return;
+      if (profile?.role === 'customer') {
+        // Out-for-delivery notifications open the live map; everything else the order page.
+        const live = data.type === 'order_picked_up' || data.type === 'partner_approaching';
+        router.push({ pathname: live ? '/track/[id]' : '/order/[id]', params: { id: data.order_id } });
+      } else if (profile?.role === 'vendor') {
+        router.push({ pathname: '/vendor/order/[id]', params: { id: data.order_id } });
+      } else if (profile?.role === 'delivery_partner') {
+        router.push('/partner');
+      }
     });
     return () => sub.remove();
   }, [profile?.role]);
