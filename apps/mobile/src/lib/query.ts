@@ -1,7 +1,14 @@
 import NetInfo from '@react-native-community/netinfo';
-import { focusManager, onlineManager, QueryClient } from '@tanstack/react-query';
+import { focusManager, MutationCache, onlineManager, QueryCache, QueryClient } from '@tanstack/react-query';
 import { AppState, Platform } from 'react-native';
 import { errorCode } from '@localloop/shared';
+import { reportError } from '@/services/crashReporting';
+
+// Unexpected failures (not network trouble, not a known business rule such as
+// "store closed") are bugs worth seeing in admin → App health.
+const reportUnexpected = (error: unknown) => {
+  if (errorCode(error) === 'generic') reportError(error);
+};
 
 // Pause queries while offline and resume (refetching stale data) on reconnect.
 onlineManager.setEventListener((setOnline) =>
@@ -14,6 +21,8 @@ AppState.addEventListener('change', (status) => {
 });
 
 export const queryClient = new QueryClient({
+  queryCache: new QueryCache({ onError: reportUnexpected }),
+  mutationCache: new MutationCache({ onError: reportUnexpected }),
   defaultOptions: {
     queries: {
       staleTime: 30_000,

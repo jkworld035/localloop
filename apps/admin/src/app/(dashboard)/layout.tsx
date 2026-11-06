@@ -13,6 +13,7 @@ const NAV: { href: string; label: string; perm: Permission[] }[] = [
   { href: '/catalogue', label: 'Catalogue', perm: ['catalog'] },
   { href: '/coupons', label: 'Coupons', perm: ['coupons'] },
   { href: '/finance', label: 'Finance', perm: ['payments', 'commissions'] },
+  { href: '/health', label: 'App health', perm: ['orders'] },
   { href: '/settings', label: 'Platform settings', perm: ['settings'] },
   { href: '/audit', label: 'Audit log', perm: ['audit'] },
 ];

@@ -1,5 +1,7 @@
 # Launch checklist
 
+Step-by-step commands are in [go-live.md](go-live.md); store texts and the Data safety answers in [store-listing.md](store-listing.md). Run `pnpm preflight` before every production build.
+
 Everything below needs the owner (accounts, legal entity, money, people) — the
 code is ready for each item. Tick them off before opening to the public.
 

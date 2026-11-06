@@ -13,31 +13,47 @@
       "developmentClient": true,
       "distribution": "internal",
       "environment": "development",
-      "env": { "APP_VARIANT": "development" },
-      "android": { "buildType": "apk" },
-      "ios": { "simulator": false }
+      "env": {
+        "APP_VARIANT": "development"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": false
+      }
     },
     "preview": {
       "extends": "base",
       "distribution": "internal",
       "environment": "preview",
       "channel": "preview",
-      "env": { "APP_VARIANT": "preview" },
-      "android": { "buildType": "apk" }
+      "env": {
+        "APP_VARIANT": "preview"
+      },
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {
       "extends": "base",
       "environment": "production",
       "channel": "production",
       "autoIncrement": true,
-      "android": { "buildType": "app-bundle" }
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "APP_VARIANT": "production"
+      }
     }
   },
   "submit": {
     "production": {
       "android": {
         "track": "internal",
-        "releaseStatus": "draft"
+        "releaseStatus": "draft",
+        "serviceAccountKeyPath": "./google-play-service-account.json"
       },
       "ios": {}
     }

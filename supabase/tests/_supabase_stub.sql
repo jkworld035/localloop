@@ -54,3 +54,10 @@ do $$ begin
     create publication supabase_realtime;
   end if;
 end $$;
+
+-- Supabase's platform defaults: every new table, function and sequence in
+-- public is granted to the API roles. Mirroring them here means the security
+-- suite (10_security) sees the same privileges as the hosted project.
+alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
+alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
+alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;

@@ -15,7 +15,8 @@
     "test:db": "bash scripts/test-db.sh",
     "lint": "pnpm -r lint",
     "test:unit": "vitest run",
-    "gen:types": "python3 scripts/gen-db-types.py"
+    "gen:types": "python3 scripts/gen-db-types.py",
+    "preflight": "node scripts/preflight.mjs"
   },
   "devDependencies": {
     "typescript": "~6.0.3",

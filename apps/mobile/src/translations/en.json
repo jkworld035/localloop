@@ -573,7 +573,9 @@
     "ticket_closed": "This conversation is closed. Please start a new one.",
     "open_orders": "You have orders in progress. Delete your account after they are delivered or cancelled.",
     "cash_not_settled": "Hand over the cash you collected on delivery before deleting your account.",
-    "deletion_incomplete": "Your data was removed but sign-in deletion didn't finish. Please try again."
+    "deletion_incomplete": "Your data was removed but sign-in deletion didn't finish. Please try again.",
+    "crash_title": "Something went wrong",
+    "crash_body": "Sorry — this screen hit a problem. We've been told about it automatically. Please try again."
   },
   "shop": {
     "add": "Add",

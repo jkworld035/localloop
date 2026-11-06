@@ -15,7 +15,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   name: IS_DEV ? 'LocalLoop (Dev)' : IS_PREVIEW ? 'LocalLoop (Preview)' : 'LocalLoop',
   slug: 'localloop',
   scheme: 'localloop',
-  version: '0.1.0',
+  // Store version shown to users. Build numbers (versionCode / buildNumber) are
+  // managed by EAS (appVersionSource: remote, autoIncrement on production).
+  version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',

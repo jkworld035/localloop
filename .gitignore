@@ -27,3 +27,10 @@ GoogleService-Info.plist
 *.jks
 
 .DS_Store
+
+# Store credentials (never commit)
+*service-account*.json
+*.keystore
+*.jks
+*.p8
+*.p12

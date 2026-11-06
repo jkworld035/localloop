@@ -83,6 +83,17 @@ can't revoke PostgreSQL's global grant (now an explicit allowlist).
 | Unit (vitest) | **37/37 pass** | New: notification taps route each role to the right screen; every new string has a Telugu translation |
 | Typecheck · admin build (incl. 4 static `/legal` pages) · Android bundle | **pass** | Public privacy page rendered and checked at phone width |
 
+## Phase 7 test report — 7 Nov 2026
+
+| Suite | Result | What it proves |
+|---|---|---|
+| `10_security` (pgTAP) | **9/9 pass** | Release gate for every table and function, now and in future migrations: RLS on every table; every SECURITY DEFINER function pins `search_path`; signed-out callers can run only an explicit allowlist; server-only functions (dispatch, notify, audit, purge…) are not callable from the apps; nobody signed out can write; nobody can TRUNCATE; document buckets are private; crash reports mask phone numbers and are admin-only |
+| All earlier suites | **201/201 pass** | Unchanged behaviour |
+| Unit (vitest) | **37/37 pass** | |
+| `pnpm preflight` | **fails as intended** | Blocks a store build until the legal business details are filled in |
+
+**Found and fixed by the new security gate:** `partner_dashboard`, `vendor_dashboard`, `vendor_save_product` and `set_default_address` (added in Phases 2–4) were still executable by signed-out callers through PostgreSQL's default grant. Each refused (they check the caller's role), so nothing leaked, but they now follow the allowlist. The test database now mirrors Supabase's default grants so this class of mistake is caught automatically.
+
 ## Not yet verified — needs real devices and credentials
 These can't be exercised in CI and are on the device test plan (Phase 6/7):
 - Background GPS on physical Android (Doze, OEM battery savers — test Xiaomi/Realme/Samsung) and iOS (app killed, Low Power Mode)
