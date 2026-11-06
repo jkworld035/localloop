@@ -14,18 +14,18 @@ supabase/          Migrations, RLS, RPCs, pgTAP tests, edge functions, local see
 docs/              architecture · database · setup · deployment · testing
 ```
 
-## Status — Phase 4 (delivery partner app + live tracking) complete
+## Status — Phase 5 (admin operations) complete
 
 | Area | State |
 |---|---|
-| Database: 38 tables, PostGIS, RLS on every table, 43 client RPCs, triggers, storage, realtime, cron | ✅ built and tested (153 pgTAP assertions) |
+| Database: 40 tables, PostGIS, RLS on every table, 51 client RPCs, triggers, storage, realtime, cron | ✅ built and tested (178 pgTAP assertions) |
 | Order engine: pricing, idempotent placement, stock locking, state machine, cancellations | ✅ backend and customer screens |
 | Dispatch + live tracking backend: offers, first-accept-wins, GPS ingestion, OTP handover, route ETA function | ✅ end to end: partner offers → pickup → OTP handover, customer live map with road-route ETA |
 | Auth: phone OTP, role choice, encrypted session storage | ✅ |
 | Customer app: onboarding, language, GPS location + map pin, nearby shops, shop & product pages, cart, addresses, Cash-on-Delivery checkout, live order status with delivery code, live map tracking with routed ETA and honest freshness labels, order history, saved items | ✅ |
 | Vendor app: registration, setup checklist, shop editor (map pin, hours, photos), verification documents, products with sizes/prices/stock/photos, live order queue with accept/reject/prepare/ready, dashboard with sales and low stock | ✅ |
 | Partner app: registration, documents, profile photo, go online/offline with GPS + background tracking, live delivery requests with server countdown, active job with route map, Google Maps navigation, call shop/customer, geofenced pickup, OTP + cash handover, earnings and history | ✅ |
-| Admin: secure sign-in (with specific failure reasons), overview metrics, approvals with document links, platform settings, audit log | ✅ (orders, live map, catalogue, coupons…: Phase 5) |
+| Admin: secure sign-in, overview metrics, live map of partners and open orders, orders search/detail/CSV with cancel and re-dispatch, approvals, users & shops (block/restore, hide shops), support tickets, review moderation, categories, coupons, COD cash hand-overs and shop payouts, platform settings, audit log | ✅ (service-area editor, admin team management: later) |
 | Push notifications (EN/TE templates, Expo push, token lifecycle) | ✅ code complete; needs EAS/FCM/APNs credentials |
 | Store builds | ⏳ EAS profiles ready; needs owner accounts (see docs/setup.md §1) |
 

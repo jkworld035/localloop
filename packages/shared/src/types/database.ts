@@ -325,6 +325,7 @@ export type Database = {
           vendor_payout: number;
           settled_at: string | null;
           created_at: string;
+          payout_id: string | null;
         };
         Insert: {
           id?: string;
@@ -337,6 +338,7 @@ export type Database = {
           vendor_payout: number;
           settled_at?: string | null;
           created_at?: string;
+          payout_id?: string | null;
         };
         Update: {
           id?: string;
@@ -349,6 +351,7 @@ export type Database = {
           vendor_payout?: number;
           settled_at?: string | null;
           created_at?: string;
+          payout_id?: string | null;
         };
         Relationships: [
           {
@@ -356,6 +359,13 @@ export type Database = {
             columns: ["order_id"];
             isOneToOne: true;
             referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "commissions_payout_id_fkey";
+            columns: ["payout_id"];
+            isOneToOne: false;
+            referencedRelation: "vendor_payouts";
             referencedColumns: ["id"];
           },
           {
@@ -1213,6 +1223,51 @@ export type Database = {
           },
         ];
       };
+      partner_cash_settlements: {
+        Row: {
+          id: string;
+          partner_id: string;
+          amount: number;
+          payment_count: number;
+          note: string | null;
+          received_by: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          partner_id: string;
+          amount: number;
+          payment_count: number;
+          note?: string | null;
+          received_by: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          partner_id?: string;
+          amount?: number;
+          payment_count?: number;
+          note?: string | null;
+          received_by?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "partner_cash_settlements_partner_id_fkey";
+            columns: ["partner_id"];
+            isOneToOne: false;
+            referencedRelation: "delivery_partners";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "partner_cash_settlements_received_by_fkey";
+            columns: ["received_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       payment_events: {
         Row: {
           id: number;
@@ -1255,6 +1310,7 @@ export type Database = {
           paid_at: string | null;
           created_at: string;
           updated_at: string;
+          cash_settlement_id: string | null;
         };
         Insert: {
           id?: string;
@@ -1269,6 +1325,7 @@ export type Database = {
           paid_at?: string | null;
           created_at?: string;
           updated_at?: string;
+          cash_settlement_id?: string | null;
         };
         Update: {
           id?: string;
@@ -1283,8 +1340,16 @@ export type Database = {
           paid_at?: string | null;
           created_at?: string;
           updated_at?: string;
+          cash_settlement_id?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "payments_cash_settlement_id_fkey";
+            columns: ["cash_settlement_id"];
+            isOneToOne: false;
+            referencedRelation: "partner_cash_settlements";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "payments_collected_by_fkey";
             columns: ["collected_by"];
@@ -1966,6 +2031,51 @@ export type Database = {
           },
         ];
       };
+      vendor_payouts: {
+        Row: {
+          id: string;
+          vendor_id: string;
+          amount: number;
+          order_count: number;
+          reference: string;
+          paid_by: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          vendor_id: string;
+          amount: number;
+          order_count: number;
+          reference: string;
+          paid_by: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          vendor_id?: string;
+          amount?: number;
+          order_count?: number;
+          reference?: string;
+          paid_by?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "vendor_payouts_paid_by_fkey";
+            columns: ["paid_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "vendor_payouts_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "vendors";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       vendors: {
         Row: {
           id: string;
@@ -2087,9 +2197,17 @@ export type Database = {
     Functions: {
       _point: { Args: { p_lat: number; p_lng: number }; Returns: unknown };
       _uuid_or_null: { Args: { p: string }; Returns: string };
+      admin_balances: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_can: { Args: { p_perm: string }; Returns: boolean };
+      admin_cancel_order: { Args: { p_order_id: string; p_reason: string; p_restock?: boolean }; Returns: undefined };
+      admin_live_map: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_overview: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_record_vendor_payout: { Args: { p_vendor_id: string; p_expected: number; p_reference: string }; Returns: string };
+      admin_redispatch: { Args: { p_order_id: string; p_release_partner?: boolean }; Returns: number };
+      admin_reply_ticket: { Args: { p_ticket_id: string; p_body: string; p_status?: Database["public"]["Enums"]["ticket_status"] }; Returns: undefined };
       admin_set_admin_role: { Args: { p_user_id: string; p_admin_role: Database["public"]["Enums"]["admin_role"] }; Returns: undefined };
+      admin_set_user_active: { Args: { p_user_id: string; p_active: boolean; p_reason?: string }; Returns: undefined };
+      admin_settle_partner_cash: { Args: { p_partner_id: string; p_expected: number; p_note?: string }; Returns: string };
       area_status: { Args: { p_lat: number; p_lng: number }; Returns: Json };
       can_view_order: { Args: { p_order_id: string }; Returns: boolean };
       choose_role: { Args: { p_role: Database["public"]["Enums"]["app_role"] }; Returns: Database["public"]["Enums"]["app_role"] };

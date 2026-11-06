@@ -438,7 +438,8 @@
     "prep_until": "{{time}}కి మీ ఆర్డర్ సిద్ధమవుతుందని దుకాణం అంచనా",
     "order_details": "ఆర్డర్ వివరాలు",
     "track_live": "లైవ్‌లో ట్రాక్ చేయండి",
-    "view_progress": "డెలివరీ పురోగతి"
+    "view_progress": "డెలివరీ పురోగతి",
+    "cancelled": "ఈ ఆర్డర్ రద్దు చేయబడింది"
   },
   "notifications": {
     "title": "నోటిఫికేషన్లు",
@@ -467,7 +468,9 @@
     "stores_suspended": "మీ దుకాణం దాచబడింది",
     "delivery_partners_approved": "మీరు డెలివరీకి ధృవీకరించబడ్డారు",
     "delivery_partners_rejected": "ధృవీకరణకు మార్పులు అవసరం",
-    "delivery_partners_suspended": "భాగస్వామి ఖాతా నిలిపివేయబడింది"
+    "delivery_partners_suspended": "భాగస్వామి ఖాతా నిలిపివేయబడింది",
+    "payout_sent": "₹{{amount}} చెల్లింపు పంపబడింది ({{reference}})",
+    "support_reply": "సపోర్ట్ స్పందించింది: {{subject}}"
   },
   "validation": {
     "required": "ఈ వివరం తప్పనిసరి.",

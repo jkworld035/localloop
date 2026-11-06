@@ -2,17 +2,24 @@ import { requireAdmin, roleCan, type Permission } from '@/lib/auth';
 import { NavLink } from '@/components/NavLink';
 import { signOut } from '../login/actions';
 
-/** Modules implemented in this release. Later phases add orders, deliveries, live map, catalogue, coupons, etc. */
-const NAV: { href: string; label: string; perm: Permission }[] = [
-  { href: '/', label: 'Overview', perm: 'orders' },
-  { href: '/approvals', label: 'Approvals', perm: 'vendors' },
-  { href: '/settings', label: 'Platform settings', perm: 'settings' },
-  { href: '/audit', label: 'Audit log', perm: 'audit' },
+const NAV: { href: string; label: string; perm: Permission[] }[] = [
+  { href: '/', label: 'Overview', perm: ['orders'] },
+  { href: '/live', label: 'Live map', perm: ['deliveries'] },
+  { href: '/orders', label: 'Orders', perm: ['orders'] },
+  { href: '/approvals', label: 'Approvals', perm: ['vendors'] },
+  { href: '/users', label: 'Users & shops', perm: ['users'] },
+  { href: '/support', label: 'Support', perm: ['tickets'] },
+  { href: '/reviews', label: 'Reviews', perm: ['reviews'] },
+  { href: '/catalogue', label: 'Catalogue', perm: ['catalog'] },
+  { href: '/coupons', label: 'Coupons', perm: ['coupons'] },
+  { href: '/finance', label: 'Finance', perm: ['payments', 'commissions'] },
+  { href: '/settings', label: 'Platform settings', perm: ['settings'] },
+  { href: '/audit', label: 'Audit log', perm: ['audit'] },
 ];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const admin = await requireAdmin();
-  const items = NAV.filter((n) => roleCan(admin.role, n.perm));
+  const items = NAV.filter((n) => n.perm.some((p) => roleCan(admin.role, p)));
 
   return (
     <div className="flex min-h-screen">
@@ -45,7 +52,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </NavLink>
           ))}
         </nav>
-        <main className="mx-auto max-w-6xl p-6 md:p-10">{children}</main>
+        <main className="mx-auto max-w-7xl p-6 md:p-10">{children}</main>
       </div>
     </div>
   );

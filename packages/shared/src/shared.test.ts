@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ORDER_STATUSES, ORDER_TRANSITIONS, canTransition } from './constants/order';
@@ -11,11 +11,15 @@ import { variantSchema } from './validation/product';
 
 describe('order state machine', () => {
   it('matches public.order_transition_allowed() in the migration', () => {
-    const sql = readFileSync(
-      resolve(__dirname, '../../../supabase/migrations/20261105000004_orders.sql'),
-      'utf8',
-    );
-    const block = sql.slice(sql.indexOf('order_transition_allowed'), sql.indexOf('$$;', sql.indexOf('order_transition_allowed')));
+    // The latest migration that (re)defines the function is the one in force.
+    const dir = resolve(__dirname, '../../../supabase/migrations');
+    const marker = 'function public.order_transition_allowed';
+    const file = readdirSync(dir)
+      .filter((f) => f.endsWith('.sql') && readFileSync(resolve(dir, f), 'utf8').includes(marker))
+      .sort()
+      .at(-1)!;
+    const sql = readFileSync(resolve(dir, file), 'utf8');
+    const block = sql.slice(sql.indexOf(marker), sql.indexOf('$$;', sql.indexOf(marker)));
     for (const from of ORDER_STATUSES) {
       const m = new RegExp(`when '${from}' then p_to (?:in \\(([^)]*)\\)|= '([a-z_]+)')`).exec(block);
       const dbTargets = m ? (m[1] ?? `'${m[2]}'`).split(',').map((s) => s.trim().replace(/'/g, '')) : [];

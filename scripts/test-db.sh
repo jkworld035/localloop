@@ -25,7 +25,10 @@ done
 status=0
 for t in "$ROOT"/supabase/tests/*.test.sql; do
   out="$("${PSQL[@]}" -d "$DB" -At -f "$t" 2>&1)" || true
-  if grep -Eq '^not ok|ERROR|Looks like' <<<"$out"; then
+  planned="$(grep -Eo '^1\.\.[0-9]+' <<<"$out" | head -1 | cut -c4-)"
+  passed="$(grep -c '^ok' <<<"$out" || true)"
+  # A script that stops early (psql error) must not count as a pass.
+  if grep -Eq '^not ok|ERROR|Looks like' <<<"$out" || [ -z "$planned" ] || [ "$planned" != "$passed" ]; then
     echo "FAIL     $(basename "$t")"
     grep -E '^not ok|ERROR|#' <<<"$out" | sed 's/^/         /'
     status=1

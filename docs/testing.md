@@ -61,6 +61,19 @@ can't revoke PostgreSQL's global grant (now an explicit allowlist).
 | Unit (vitest) | **34/34 pass** | New: the arrival estimate is hidden once the partner's position is no longer live, counts down from server compute time, and never shows 0 or negative minutes |
 | Typecheck · Android & iOS bundles | **pass** | Partner tabs (deliveries, history, profile), offer cards, job screen with map/route/navigation/OTP, documents, profile photo; customer live tracking screen and "Track live" on the order page |
 
+## Phase 5 test report — 6 Nov 2026
+
+| Suite | Result | What it proves |
+|---|---|---|
+| `08_admin` (pgTAP) | **25/25 pass** | Partner COD cash and shop earnings appear as balances; a hand-over or payout is refused if the amount changed since the admin counted it; payouts need a bank/UPI reference, mark commissions paid and notify the shop; the partner app's cash in hand drops to zero after hand-over; the live map lists online partners and open orders and flags orders with no partner; re-dispatch keeps an accepted partner unless the admin releases them (they are notified); an admin can cancel an order already out for delivery, with a reason, without restocking goods still with the partner, and it is audited; a blocked partner is taken offline; support admins can't touch money; customers can't read the live map |
+| All earlier suites | **153/153 pass** | Unchanged behaviour (partner dashboard now counts all cash not yet handed over) |
+| Unit (vitest) | **34/34 pass** | State-machine check now follows the latest migration that defines the transitions |
+| Typecheck · admin production build · Android bundle | **pass** | 17 admin routes incl. live map, orders + CSV export, users, support, reviews, catalogue, coupons, finance |
+
+**Fixed in Phase 5:** the database test runner could report a suite as passed when psql stopped early; it now fails unless every planned assertion ran.
+
+**Not yet exercised against the hosted project:** the admin pages were type-checked against the generated schema and built, but not clicked through with live data — do that after applying the patch.
+
 ## Not yet verified — needs real devices and credentials
 These can't be exercised in CI and are on the device test plan (Phase 6/7):
 - Background GPS on physical Android (Doze, OEM battery savers — test Xiaomi/Realme/Samsung) and iOS (app killed, Low Power Mode)

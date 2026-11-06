@@ -22,7 +22,7 @@ export const ORDER_TRANSITIONS: Readonly<Record<OrderStatus, readonly OrderStatu
   accepted: ['preparing', 'ready_for_pickup', 'cancelled'],
   preparing: ['ready_for_pickup', 'cancelled'],
   ready_for_pickup: ['picked_up', 'cancelled'],
-  picked_up: ['delivered'],
+  picked_up: ['delivered', 'cancelled'],
   delivered: [],
   rejected: [],
   cancelled: [],

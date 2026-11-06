@@ -58,3 +58,9 @@ Any Node 22 host (Vercel, Render, a VM). Set the two `NEXT_PUBLIC_SUPABASE_*`
 variables and deploy `apps/admin` (`pnpm --filter @localloop/admin build`).
 Put it behind your company domain; it sends `X-Frame-Options: DENY` and is
 `noindex`. Consider restricting by IP or adding Supabase MFA for admins.
+
+The admin live map draws OpenStreetMap tiles with Leaflet (no API key). That is
+fine for a handful of staff; if usage grows, switch the tile URL in
+`apps/admin/src/app/(dashboard)/live/LiveMap.tsx` to a commercial tile provider
+or Google Maps JavaScript API with an HTTP-referrer-restricted key, as the OSM
+tile policy asks heavy users to do.

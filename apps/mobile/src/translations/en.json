@@ -438,7 +438,8 @@
     "prep_until": "The shop expects your order ready by {{time}}",
     "order_details": "Order details",
     "track_live": "Track live",
-    "view_progress": "Delivery progress"
+    "view_progress": "Delivery progress",
+    "cancelled": "This order was cancelled"
   },
   "notifications": {
     "title": "Notifications",
@@ -467,7 +468,9 @@
     "stores_suspended": "Your shop has been hidden",
     "delivery_partners_approved": "You're verified to deliver",
     "delivery_partners_rejected": "Verification needs changes",
-    "delivery_partners_suspended": "Partner account suspended"
+    "delivery_partners_suspended": "Partner account suspended",
+    "payout_sent": "Payout of ₹{{amount}} sent ({{reference}})",
+    "support_reply": "Support replied: {{subject}}"
   },
   "validation": {
     "required": "This field is required.",

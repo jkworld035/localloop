@@ -56,6 +56,8 @@ export default function TrackOrder() {
   const headline =
     tr.status === 'delivered'
       ? t('tracking.delivered')
+      : tr.status === 'cancelled' || tr.status === 'rejected'
+        ? t('tracking.cancelled')
       : outForDelivery
         ? t('tracking.on_the_way')
         : a
@@ -119,7 +121,7 @@ export default function TrackOrder() {
           )}
           {outForDelivery && freshness !== 'live' && a?.location_at && <Banner tone="warning" message={t('tracking.signal_weak')} />}
           {outForDelivery && freshness === 'live' && !a?.eta_seconds && etaRequest && etaRequest !== 'ok' && <Banner tone="info" message={t('tracking.eta_unavailable')} />}
-          {!outForDelivery && tr.status !== 'delivered' && tr.prep_time_minutes != null && tr.accepted_at && (
+          {!outForDelivery && ['accepted', 'preparing', 'ready_for_pickup'].includes(tr.status) && tr.prep_time_minutes != null && tr.accepted_at && (
             <Banner
               tone="info"
               message={t('tracking.prep_until', { time: time(new Date(new Date(tr.accepted_at).getTime() + tr.prep_time_minutes * 60000)) })}

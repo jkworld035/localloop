@@ -35,6 +35,8 @@ const en: Record<string, Template> = {
   delivery_partners_approved: { channel: 'account', title: () => "You're verified", body: () => 'You can now go online and accept deliveries.' },
   delivery_partners_rejected: { channel: 'account', title: () => 'Verification update', body: () => 'We need more details to verify you. Open the app to see why.' },
   delivery_partners_suspended: { channel: 'account', title: () => 'Account suspended', body: () => 'Your partner account is suspended. Contact support.' },
+  payout_sent: { channel: 'account', title: () => 'Payout sent', body: (d) => `We've sent ₹${d.amount} for ${d.orders} orders. Reference: ${d.reference}.` },
+  support_reply: { channel: 'account', title: () => 'Support replied', body: (d) => `We've replied to "${d.subject}". Open the app to read it.` },
 };
 
 const te: Record<string, Template> = {
@@ -63,6 +65,8 @@ const te: Record<string, Template> = {
   delivery_partners_approved: { channel: 'account', title: () => 'మీరు ధృవీకరించబడ్డారు', body: () => 'ఇప్పుడు ఆన్‌లైన్‌కి వెళ్లి డెలివరీలు అంగీకరించవచ్చు.' },
   delivery_partners_rejected: { channel: 'account', title: () => 'ధృవీకరణ అప్‌డేట్', body: () => 'మిమ్మల్ని ధృవీకరించడానికి మరిన్ని వివరాలు కావాలి. కారణం చూడటానికి యాప్ తెరవండి.' },
   delivery_partners_suspended: { channel: 'account', title: () => 'ఖాతా నిలిపివేయబడింది', body: () => 'మీ భాగస్వామి ఖాతా నిలిపివేయబడింది. సపోర్ట్‌ను సంప్రదించండి.' },
+  payout_sent: { channel: 'account', title: () => 'చెల్లింపు పంపబడింది', body: (d) => `${d.orders} ఆర్డర్లకు ₹${d.amount} పంపించాం. రిఫరెన్స్: ${d.reference}.` },
+  support_reply: { channel: 'account', title: () => 'సపోర్ట్ స్పందించింది', body: (d) => `"${d.subject}" కు మేము స్పందించాం. చదవడానికి యాప్ తెరవండి.` },
 };
 
 export const NOTIFICATION_TYPES = Object.keys(en);
