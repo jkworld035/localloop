@@ -408,7 +408,8 @@
     "picked_up": "On the way",
     "delivered": "Delivered",
     "rejected": "Not accepted",
-    "cancelled": "Cancelled"
+    "cancelled": "Cancelled",
+    "awaiting_payment": "Waiting for payment"
   },
   "units": {
     "piece": "piece",
@@ -575,7 +576,10 @@
     "cash_not_settled": "Hand over the cash you collected on delivery before deleting your account.",
     "deletion_incomplete": "Your data was removed but sign-in deletion didn't finish. Please try again.",
     "crash_title": "Something went wrong",
-    "crash_body": "Sorry — this screen hit a problem. We've been told about it automatically. Please try again."
+    "crash_body": "Sorry — this screen hit a problem. We've been told about it automatically. Please try again.",
+    "payment_window_closed": "The time to pay for this order has ended. Please order again.",
+    "already_paid": "This order is already paid.",
+    "payment_provider_error": "Couldn't open the payment page. Check your connection and try again, or choose cash on delivery."
   },
   "shop": {
     "add": "Add",
@@ -641,12 +645,13 @@
     "cod_hint": "Pay in cash when your order arrives.",
     "test_hint": "For testing only. No money is charged.",
     "place_order": "Place order · {{total}}",
-    "place_order_plain": "Place order"
+    "place_order_plain": "Place order",
+    "razorpay_hint": "Pay securely with Razorpay — GPay, PhonePe, Paytm, any UPI app, cards or netbanking."
   },
   "payment_method": {
     "cod": "Cash on delivery",
     "test": "Test payment",
-    "razorpay": "Online payment"
+    "razorpay": "UPI, card or netbanking"
   },
   "payment_status": {
     "pending": "To be paid",
@@ -811,5 +816,15 @@
     "type_delete": "Type DELETE to confirm",
     "confirm": "Delete my account",
     "help": "Having trouble? Contact Help & support before deleting — we may be able to fix it."
+  },
+  "payment": {
+    "awaiting_title": "Complete your payment",
+    "awaiting_body_one": "The shop gets your order as soon as you pay. Items are held for you for {{count}} more minute.",
+    "awaiting_body_other": "The shop gets your order as soon as you pay. Items are held for you for {{count}} more minutes.",
+    "pay_now": "Pay {{total}} now",
+    "after_paying": "After paying, come back to LocalLoop — this screen updates by itself.",
+    "window_expired": "Payment wasn't completed in time, so the order was cancelled. If any money was taken, it is refunded automatically.",
+    "refund_in_progress": "Your refund of {{total}} is being processed.",
+    "refunded": "Refunded to your original payment method. Banks usually take 5–7 working days to show it."
   }
 }

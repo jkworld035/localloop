@@ -5,6 +5,7 @@
  * (packages/shared/src/constants/order.test.ts checks this list).
  */
 export const ORDER_STATUSES = [
+  'awaiting_payment',
   'placed',
   'accepted',
   'preparing',
@@ -18,6 +19,7 @@ export const ORDER_STATUSES = [
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 export const ORDER_TRANSITIONS: Readonly<Record<OrderStatus, readonly OrderStatus[]>> = {
+  awaiting_payment: ['placed', 'cancelled'],
   placed: ['accepted', 'rejected', 'cancelled'],
   accepted: ['preparing', 'ready_for_pickup', 'cancelled'],
   preparing: ['ready_for_pickup', 'cancelled'],
@@ -52,7 +54,8 @@ export const ASSIGNMENT_STATUSES = [
 ] as const;
 export type AssignmentStatus = (typeof ASSIGNMENT_STATUSES)[number];
 
-export const PAYMENT_METHODS = ['cod', 'test'] as const;
+// 'razorpay' is offered only when the online_payments_enabled setting is on.
+export const PAYMENT_METHODS = ['cod', 'razorpay', 'test'] as const;
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 export const PAYMENT_STATUSES = ['pending', 'paid', 'failed', 'refunded'] as const;

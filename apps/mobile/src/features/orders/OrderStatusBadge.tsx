@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui';
 
 const tone: Record<OrderStatus, { fg: string; bg: string }> = {
+  awaiting_payment: { fg: colors.status.warning, bg: colors.status.warningBg },
   placed: { fg: colors.status.info, bg: colors.status.infoBg },
   accepted: { fg: colors.status.info, bg: colors.status.infoBg },
   preparing: { fg: colors.status.warning, bg: colors.status.warningBg },

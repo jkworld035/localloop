@@ -61,5 +61,11 @@ verify_jwt = true
 [functions.send-push]
 verify_jwt = false # authorised inside the function against the service-role key
 
+[functions.razorpay-pay]
+verify_jwt = true
+
+[functions.razorpay-refund]
+verify_jwt = false # authorised inside the function against the service-role key
+
 [functions.razorpay-webhook]
 verify_jwt = false # authenticated by Razorpay HMAC signature

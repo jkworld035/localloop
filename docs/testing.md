@@ -94,6 +94,17 @@ can't revoke PostgreSQL's global grant (now an explicit allowlist).
 
 **Found and fixed by the new security gate:** `partner_dashboard`, `vendor_dashboard`, `vendor_save_product` and `set_default_address` (added in Phases 2–4) were still executable by signed-out callers through PostgreSQL's default grant. Each refused (they check the caller's role), so nothing leaked, but they now follow the allowlist. The test database now mirrors Supabase's default grants so this class of mistake is caught automatically.
 
+## Online payments test report — 7 Nov 2026
+
+| Suite | Result | What it proves |
+|---|---|---|
+| `11_payments` (pgTAP) | **20/20 pass** | Refused until switched on; an online order waits for payment with stock held and is invisible to the shop (no notification, RLS hides it); apps cannot mark a payment paid; the webhook confirmation moves it to Placed exactly once and only then tells the shop; a paid order the shop rejects is queued for refund and shown as paid until the refund goes through; unpaid orders are cancelled after the window with stock released; late or wrong-amount payments are refunded |
+| All earlier suites | **210/210 pass** | Cash on delivery unchanged |
+| Unit (vitest) | **41/41 pass** | New: rupee→paise conversion is exact; payment links respect Razorpay's 15-minute minimum and can't be partly paid; webhook signature matches OpenSSL's HMAC-SHA256 |
+| Edge functions (`deno check`) | **pass** | razorpay-pay, razorpay-webhook, razorpay-refund, delete-account |
+
+**Not yet exercised against Razorpay itself** — needs your test-mode keys (docs/payments.md → "Test it").
+
 ## Not yet verified — needs real devices and credentials
 These can't be exercised in CI and are on the device test plan (Phase 6/7):
 - Background GPS on physical Android (Doze, OEM battery savers — test Xiaomi/Realme/Samsung) and iOS (app killed, Low Power Mode)

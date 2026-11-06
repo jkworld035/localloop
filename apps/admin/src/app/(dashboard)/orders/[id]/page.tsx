@@ -28,7 +28,7 @@ export default async function OrderDetail({ params, searchParams }: { params: Pr
   const [history, assignments, payments] = await Promise.all([
     db.from('order_status_history').select('id, from_status, to_status, created_at, note, actor:profiles(full_name, role)').eq('order_id', id).order('created_at'),
     db.from('delivery_assignments').select('id, status, offered_at, responded_at, picked_up_at, delivered_at, earning, partner:delivery_partners(id, vehicle_type, profile:profiles!delivery_partners_id_fkey(full_name, phone))').eq('order_id', id).order('offered_at'),
-    db.from('payments').select('id, method, amount, status, paid_at, failure_reason, cash_settlement_id').eq('order_id', id),
+    db.from('payments').select('id, method, amount, status, paid_at, failure_reason, cash_settlement_id, provider_payment_id, refund_status, refund_error, refunded_at').eq('order_id', id),
   ]);
   const addr = o.delivery_address as Record<string, string>;
   const active = assignments.data?.find((a) => a.status === 'accepted' || a.status === 'picked_up');
@@ -164,6 +164,14 @@ export default async function OrderDetail({ params, searchParams }: { params: Pr
                     <p className="text-ink-2">{p.cash_settlement_id ? 'Cash handed over by partner' : 'Cash still with the partner'}</p>
                   )}
                   {p.failure_reason && <p className="text-ink-2">{label(p.failure_reason)}</p>}
+                  {p.provider_payment_id && p.method === 'razorpay' && <p className="font-mono text-xs text-ink-2">Razorpay {p.provider_payment_id}</p>}
+                  {p.refund_status && (
+                    <p className={p.refund_status === 'failed' ? 'text-bad' : 'text-ink-2'}>
+                      Refund {label(p.refund_status)}
+                      {p.refunded_at ? ` ${ist(p.refunded_at)}` : ''}
+                      {p.refund_error ? ` — ${p.refund_error}` : ''}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
@@ -209,7 +217,7 @@ export default async function OrderDetail({ params, searchParams }: { params: Pr
                   </fieldset>
                 )}
                 {o.payment_status === 'paid' && o.payment_method !== 'cod' && (
-                  <p className="text-warn">This order was paid online. It will be marked refunded — issue the refund in the payment provider.</p>
+                  <p className="text-warn">This order was paid online. Cancelling refunds the customer automatically through Razorpay.</p>
                 )}
                 <button className={btnDanger}>Cancel order</button>
               </form>

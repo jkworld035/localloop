@@ -1,5 +1,6 @@
 import type { PaymentMethod } from '@localloop/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Linking } from 'react-native';
 import { useEffect } from 'react';
 import { unwrap } from '@/lib/errors';
 import { supabase } from '@/lib/supabase';
@@ -30,12 +31,13 @@ export function useOrder(orderId: string) {
         await supabase
           .from('orders')
           .select(
-            `id, order_number, status, placed_at, accepted_at, delivered_at, prep_time_minutes,
+            `id, order_number, status, created_at, placed_at, accepted_at, delivered_at, prep_time_minutes,
              subtotal, delivery_fee, discount, tax, total, payment_method, payment_status,
              delivery_address, delivery_instructions, rejection_reason, cancel_reason,
              store:stores(id, name, name_te, phone),
              items:order_items(id, product_id, product_name, variant_label, unit_price, quantity, line_total),
-             history:order_status_history(id, to_status, created_at, note)`,
+             history:order_status_history(id, to_status, created_at, note),
+             payments(method, status, refund_status)`,
           )
           .eq('id', orderId)
           .order('created_at', { referencedTable: 'order_status_history', ascending: true })
@@ -96,7 +98,7 @@ export function usePlaceOrder() {
           p_coupon_code: a.couponCode ?? undefined,
           p_instructions: a.instructions,
         }),
-      ) as unknown as { order_id: string; order_number: string; total: number; duplicate: boolean },
+      ) as unknown as { order_id: string; order_number: string; total: number; duplicate: boolean; awaiting_payment: boolean },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['cart'] });
       void qc.invalidateQueries({ queryKey: ['my-orders'] });
@@ -116,15 +118,48 @@ export function useCancelOrder(orderId: string) {
   });
 }
 
-export function useTestPaymentsEnabled() {
+/** A public on/off platform setting (app_settings rows marked is_public). */
+function usePublicFlag(key: string) {
   return useQuery({
-    queryKey: ['setting', 'test_payments_enabled'],
+    queryKey: ['setting', key],
     staleTime: 5 * 60_000,
     queryFn: async () => {
-      const row = unwrap(
-        await supabase.from('app_settings').select('value').eq('key', 'test_payments_enabled').maybeSingle(),
-      );
+      const row = unwrap(await supabase.from('app_settings').select('value').eq('key', key).maybeSingle());
       return row?.value === true;
+    },
+  });
+}
+
+export const useTestPaymentsEnabled = () => usePublicFlag('test_payments_enabled');
+export const useOnlinePaymentsEnabled = () => usePublicFlag('online_payments_enabled');
+
+export function usePaymentWindowMinutes() {
+  return useQuery({
+    queryKey: ['setting', 'payment_window_minutes'],
+    staleTime: 30 * 60_000,
+    queryFn: async () => {
+      const row = unwrap(await supabase.from('app_settings').select('value').eq('key', 'payment_window_minutes').maybeSingle());
+      return Number(row?.value ?? 20) || 20;
+    },
+  });
+}
+
+/**
+ * Opens Razorpay's payment page for an order awaiting payment (UPI apps,
+ * cards, netbanking) in the browser. The app never marks the order paid
+ * itself: Razorpay's signed webhook does, and the order screen updates live.
+ */
+export function usePayOnline() {
+  return useMutation({
+    mutationFn: async (orderId: string) => {
+      const { data, error } = await supabase.functions.invoke('razorpay-pay', { body: { order_id: orderId } });
+      if (error) {
+        const body = await (error as { context?: Response }).context?.json?.().catch(() => null);
+        throw new Error((body as { error?: string } | null)?.error ?? 'payment_provider_error');
+      }
+      const url = (data as { url?: string } | null)?.url;
+      if (!url) throw new Error('payment_provider_error');
+      await Linking.openURL(url);
     },
   });
 }

@@ -16,7 +16,7 @@ Keep `localloop-dev` for testing; customers get their own project so test data n
    ```powershell
    npx supabase@latest link --project-ref <prod-ref>
    npx supabase@latest db push --remote
-   npx supabase@latest functions deploy compute-eta send-push razorpay-webhook delete-account --project-ref <prod-ref> --use-api
+   npx supabase@latest functions deploy compute-eta send-push razorpay-pay razorpay-webhook razorpay-refund delete-account --project-ref <prod-ref> --use-api
    ```
 3. Secrets (type the values, never paste them in chat):
    ```powershell
@@ -46,6 +46,9 @@ Some Indian ISPs block `*.supabase.co` (you hit this yourself). Customers on tho
 1. **(you)** Buy a domain (e.g. `localloop.in`) from any registrar.
 2. Supabase → Project settings → Custom domains → add `api.localloop.in` ($10/month add-on), create the CNAME and TXT records it shows at your registrar, then activate.
 3. Use `https://api.localloop.in` as `EXPO_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_URL` everywhere below.
+
+## 3b. Online payments
+Follow [payments.md](payments.md) with **live** Razorpay keys on the production project (after KYC approval). Cash on delivery works without it.
 
 ## 4. Google keys for the release app
 1. **(you)** Google Cloud → Credentials → Android key restricted to package `in.localloop.app` with the **release** SHA-1 (`eas credentials` → Android → production shows it after the first production build; Play App Signing adds a second SHA-1 under Play Console → Setup → App signing — add both).

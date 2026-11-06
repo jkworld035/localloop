@@ -25,3 +25,11 @@ export async function recordVendorPayout(form: FormData) {
   revalidatePath('/finance');
   back('/finance', error ? { error } : { done: `Recorded payout of ${inr(expected)}. The shop has been notified.` });
 }
+
+export async function retryRefund(form: FormData) {
+  const paymentId = z.string().uuid().parse(form.get('payment_id'));
+  const { supabase } = await requireAdmin('payments');
+  const { error } = await supabase.rpc('admin_retry_refund', { p_payment_id: paymentId });
+  revalidatePath('/finance');
+  back('/finance', error ? { error } : { done: 'Refund queued again.' });
+}

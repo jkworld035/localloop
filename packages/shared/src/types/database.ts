@@ -1165,6 +1165,7 @@ export type Database = {
           is_demo: boolean;
           created_at: string;
           updated_at: string;
+          released_at: string | null;
         };
         Insert: {
           id?: string;
@@ -1198,6 +1199,7 @@ export type Database = {
           is_demo?: boolean;
           created_at?: string;
           updated_at?: string;
+          released_at?: string | null;
         };
         Update: {
           id?: string;
@@ -1231,6 +1233,7 @@ export type Database = {
           is_demo?: boolean;
           created_at?: string;
           updated_at?: string;
+          released_at?: string | null;
         };
         Relationships: [
           {
@@ -1358,6 +1361,12 @@ export type Database = {
           created_at: string;
           updated_at: string;
           cash_settlement_id: string | null;
+          checkout_url: string | null;
+          checkout_expires_at: string | null;
+          refund_status: string | null;
+          refund_id: string | null;
+          refunded_at: string | null;
+          refund_error: string | null;
         };
         Insert: {
           id?: string;
@@ -1373,6 +1382,12 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
           cash_settlement_id?: string | null;
+          checkout_url?: string | null;
+          checkout_expires_at?: string | null;
+          refund_status?: string | null;
+          refund_id?: string | null;
+          refunded_at?: string | null;
+          refund_error?: string | null;
         };
         Update: {
           id?: string;
@@ -1388,6 +1403,12 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
           cash_settlement_id?: string | null;
+          checkout_url?: string | null;
+          checkout_expires_at?: string | null;
+          refund_status?: string | null;
+          refund_id?: string | null;
+          refunded_at?: string | null;
+          refund_error?: string | null;
         };
         Relationships: [
           {
@@ -2251,7 +2272,9 @@ export type Database = {
       admin_overview: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_record_vendor_payout: { Args: { p_vendor_id: string; p_expected: number; p_reference: string }; Returns: string };
       admin_redispatch: { Args: { p_order_id: string; p_release_partner?: boolean }; Returns: number };
+      admin_refund_queue: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_reply_ticket: { Args: { p_ticket_id: string; p_body: string; p_status?: Database["public"]["Enums"]["ticket_status"] }; Returns: undefined };
+      admin_retry_refund: { Args: { p_payment_id: string }; Returns: undefined };
       admin_set_admin_role: { Args: { p_user_id: string; p_admin_role: Database["public"]["Enums"]["admin_role"] }; Returns: undefined };
       admin_set_user_active: { Args: { p_user_id: string; p_active: boolean; p_reason?: string }; Returns: undefined };
       admin_settle_partner_cash: { Args: { p_partner_id: string; p_expected: number; p_note?: string }; Returns: string };
@@ -2312,7 +2335,7 @@ export type Database = {
       category_kind: "store" | "product";
       discount_type: "percent" | "flat";
       document_status: "pending" | "approved" | "rejected";
-      order_status: "placed" | "accepted" | "preparing" | "ready_for_pickup" | "picked_up" | "delivered" | "rejected" | "cancelled";
+      order_status: "awaiting_payment" | "placed" | "accepted" | "preparing" | "ready_for_pickup" | "picked_up" | "delivered" | "rejected" | "cancelled";
       payment_method: "cod" | "test" | "razorpay";
       payment_status: "pending" | "paid" | "failed" | "refunded";
       product_unit: "piece" | "kg" | "g" | "l" | "ml" | "packet" | "box" | "dozen";

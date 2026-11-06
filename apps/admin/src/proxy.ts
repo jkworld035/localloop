@@ -8,8 +8,8 @@ import { NextResponse, type NextRequest } from 'next/server';
  * action, and RLS enforces it again in the database.
  */
 export default async function proxy(request: NextRequest) {
-  // Public policy pages (app-store links) need no session.
-  if (request.nextUrl.pathname.startsWith('/legal')) return NextResponse.next();
+  // Public pages need no session: policies (app-store links) and the payment return page.
+  if (request.nextUrl.pathname.startsWith('/legal') || request.nextUrl.pathname.startsWith('/pay/')) return NextResponse.next();
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return NextResponse.next(); // the layout renders a configuration notice

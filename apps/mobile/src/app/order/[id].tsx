@@ -7,7 +7,8 @@ import { BackRow } from '@/components/BackRow';
 import { BillSummary } from '@/components/shop/BillSummary';
 import { AppText, Banner, Button, Card, ErrorState, LoadingState, Screen } from '@/components/ui';
 import { OrderStatusBadge } from '@/features/orders/OrderStatusBadge';
-import { useCancelOrder, useDeliveryOtp, useOrder, useOrderRealtime } from '@/features/orders/api';
+import { useCancelOrder, useDeliveryOtp, useOrder, useOrderRealtime, usePayOnline, usePaymentWindowMinutes } from '@/features/orders/api';
+import { useNow } from '@/lib/useNow';
 import { errorMessage } from '@/lib/errors';
 import { StarRating } from '@/components/StarRating';
 import { useReviewState } from '@/features/reviews/api';
@@ -25,6 +26,9 @@ export default function OrderDetail() {
   const open = !!order.data && !TERMINAL_ORDER_STATUSES.includes(order.data.status);
   const otp = useDeliveryOtp(id, open);
   const cancel = useCancelOrder(id);
+  const payOnline = usePayOnline();
+  const windowMin = usePaymentWindowMinutes().data ?? 20;
+  const now = useNow(15_000);
 
   if (order.isPending) return <LoadingState />;
   if (order.isError)
@@ -90,11 +94,40 @@ export default function OrderDetail() {
         <OrderStatusBadge status={o.status} />
       </View>
 
+      {o.status === 'awaiting_payment' && (
+        <Card style={styles.payCard}>
+          <AppText variant="title" weight="bold">
+            {t('payment.awaiting_title')}
+          </AppText>
+          <AppText>
+            {t('payment.awaiting_body', {
+              count: Math.max(1, Math.ceil((new Date(o.created_at).getTime() + windowMin * 60_000 - now) / 60_000)),
+            })}
+          </AppText>
+          <Button label={t('payment.pay_now', { total: formatINR(o.total, lang) })} icon="card-outline" loading={payOnline.isPending} onPress={() => payOnline.mutate(id)} />
+          {payOnline.isError && <Banner tone="danger" message={errorMessage(payOnline.error)} />}
+          <AppText variant="small" color={colors.text.secondary}>
+            {t('payment.after_paying')}
+          </AppText>
+        </Card>
+      )}
+      {o.payment_method === 'razorpay' && closed && o.payments?.[0]?.refund_status && (
+        <Banner
+          tone="info"
+          message={o.payment_status === 'refunded' ? t('payment.refunded') : t('payment.refund_in_progress', { total: formatINR(o.total, lang) })}
+        />
+      )}
+
       {o.status === 'accepted' && o.prep_time_minutes != null && (
         <Banner tone="info" message={t('order.prep_eta', { minutes: o.prep_time_minutes })} />
       )}
       {o.status === 'rejected' && o.rejection_reason && <Banner tone="danger" message={t('order.reason', { reason: o.rejection_reason })} />}
-      {o.status === 'cancelled' && o.cancel_reason && <Banner tone="danger" message={t('order.reason', { reason: o.cancel_reason })} />}
+      {o.status === 'cancelled' && o.cancel_reason && (
+        <Banner
+          tone="danger"
+          message={o.cancel_reason === 'payment_not_completed' ? t('payment.window_expired') : t('order.reason', { reason: o.cancel_reason })}
+        />
+      )}
 
       {/* Live tracking: the map shows the partner once the order is picked up */}
       {o.status === 'picked_up' ? (
@@ -202,7 +235,7 @@ export default function OrderDetail() {
         onPress={() => router.push({ pathname: '/support/new', params: { orderId: id, orderNumber: o.order_number } })}
       />
 
-      {o.status === 'placed' && (
+      {(o.status === 'placed' || o.status === 'awaiting_payment') && (
         <Button label={t('order.cancel')} variant="danger" icon="close-circle-outline" loading={cancel.isPending} onPress={confirmCancel} />
       )}
     </Screen>
@@ -260,6 +293,7 @@ const styles = StyleSheet.create({
   placed: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xl },
   rowBetween: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: spacing.md },
   flex: { flex: 1 },
+  payCard: { borderColor: colors.status.warning, borderWidth: 2 },
   rateCard: { borderColor: colors.brand.amber, borderWidth: 2 },
   otpCard: { alignItems: 'center', borderColor: colors.brand.forest, borderWidth: 2 },
   otp: { letterSpacing: 12 },

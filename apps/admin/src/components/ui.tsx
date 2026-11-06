@@ -53,6 +53,7 @@ export function Badge({ tone = 'info', children }: { tone?: keyof typeof BADGE_T
 }
 
 const STATUS_TONE: Record<string, keyof typeof BADGE_TONES> = {
+  awaiting_payment: 'warn',
   placed: 'warn',
   accepted: 'info',
   preparing: 'info',

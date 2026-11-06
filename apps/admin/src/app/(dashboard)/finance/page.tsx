@@ -1,10 +1,13 @@
 import { requireAdmin, roleCan } from '@/lib/auth';
-import { ActionResult, btnPrimary, Empty, inputCls, PageHeader, Section, Table } from '@/components/ui';
+import { ActionResult, btnPrimary, btnSecondary, Empty, inputCls, PageHeader, Section, Table } from '@/components/ui';
 import { inr, ist } from '@/lib/format';
-import { recordVendorPayout, settlePartnerCash } from './actions';
+import Link from 'next/link';
+import { recordVendorPayout, retryRefund, settlePartnerCash } from './actions';
 
 export const metadata = { title: 'Finance' };
 export const dynamic = 'force-dynamic';
+
+type RefundRow = { payment_id: string; order_id: string; order_number: string; amount: number; refund_status: string; refund_error: string | null; paid_at: string };
 
 type Balances = {
   partners: { partner_id: string; name: string; phone: string; amount: number; payments: number; oldest: string }[];
@@ -19,6 +22,7 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
   const db = admin.supabase;
   const sp = await searchParams;
   const { data, error } = await db.rpc('admin_balances');
+  const refunds = canCash ? (await db.rpc('admin_refund_queue')).data as unknown as RefundRow[] | null : null;
   const b = (data ?? { partners: [], vendors: [] }) as unknown as Balances;
   const [settlements, payouts] = await Promise.all([
     canCash
@@ -35,6 +39,36 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
       />
       <ActionResult {...sp} />
       {error && <ActionResult error={error.message} />}
+
+      {refunds && refunds.length > 0 && (
+        <Section title="Online refunds in progress" count={refunds.length}>
+          <Table head={['Order', 'Amount', 'State', 'Paid', '']}>
+            {refunds.map((r) => (
+              <tr key={r.payment_id} className="border-t border-line align-top">
+                <td className="px-4 py-3">
+                  <Link href={`/orders/${r.order_id}`} className="font-medium text-forest hover:underline">
+                    {r.order_number}
+                  </Link>
+                </td>
+                <td className="px-4 py-3 tabular-nums">{inr(r.amount)}</td>
+                <td className={`px-4 py-3 ${r.refund_status === 'failed' ? 'text-bad' : ''}`}>
+                  {r.refund_status === 'failed' ? `Failed: ${r.refund_error ?? 'unknown error'}` : 'Being sent to Razorpay'}
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">{ist(r.paid_at)}</td>
+                <td className="px-4 py-3">
+                  {r.refund_status === 'failed' && (
+                    <form action={retryRefund}>
+                      <input type="hidden" name="payment_id" value={r.payment_id} />
+                      <button className={btnSecondary}>Try again</button>
+                    </form>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </Table>
+          <p className="mt-2 text-xs text-ink-2">Refunds start automatically when a paid online order is rejected or cancelled. Retries run every 10 minutes.</p>
+        </Section>
+      )}
 
       {canCash && (
         <Section title="Cash with delivery partners" count={b.partners.length}>

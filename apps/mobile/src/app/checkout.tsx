@@ -10,7 +10,7 @@ import { AppText, Banner, Button, Card, ErrorState, LoadingState, Screen, TextFi
 import { formatAddress, useAddresses } from '@/features/addresses/api';
 import { cartItemCount, useCart, useCartQuote } from '@/features/cart/api';
 import { issueMessage } from '@/features/cart/issues';
-import { usePlaceOrder, useTestPaymentsEnabled } from '@/features/orders/api';
+import { useOnlinePaymentsEnabled, usePayOnline, usePlaceOrder, useTestPaymentsEnabled } from '@/features/orders/api';
 import { errorMessage } from '@/lib/errors';
 import { useCheckout } from '@/stores/checkout';
 
@@ -20,6 +20,8 @@ export default function Checkout() {
   const cart = useCart();
   const addresses = useAddresses();
   const testPayments = useTestPaymentsEnabled();
+  const onlinePayments = useOnlinePaymentsEnabled();
+  const payOnline = usePayOnline();
   const checkout = useCheckout();
   const [couponInput, setCouponInput] = useState(checkout.couponCode ?? '');
   const place = usePlaceOrder();
@@ -64,7 +66,9 @@ export default function Checkout() {
         onSuccess: (res) => {
           checkout.completed();
           router.dismissAll();
-          router.replace({ pathname: '/order/[id]', params: { id: res.order_id, placed: '1' } });
+          router.replace({ pathname: '/order/[id]', params: { id: res.order_id, placed: res.awaiting_payment ? undefined : '1' } });
+          // Online payment: straight to Razorpay. If that fails, the order page has "Pay now".
+          if (res.awaiting_payment) payOnline.mutate(res.order_id);
         },
         // A changed price/stock is re-quoted so the user sees the new state before retrying.
         onError: () => void quote.refetch(),
@@ -72,7 +76,7 @@ export default function Checkout() {
     );
   };
 
-  const methods: PaymentMethod[] = testPayments.data ? ['cod', 'test'] : ['cod'];
+  const methods: PaymentMethod[] = [...(onlinePayments.data ? (['razorpay'] as const) : []), 'cod', ...(testPayments.data ? (['test'] as const) : [])];
 
   return (
     <Screen
