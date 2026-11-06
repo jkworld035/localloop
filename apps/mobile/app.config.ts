@@ -84,7 +84,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ['expo-build-properties', { android: { minSdkVersion: 26 }, ios: { deploymentTarget: '16.4' } }],
   ],
   extra: {
-    eas: { projectId: process.env.EAS_PROJECT_ID },
+    eas: { projectId: (process.env.EAS_PROJECT_ID ?? 'e0292ea8-6ed9-435d-b854-0e8c0e448b7e') },
   },
-  updates: process.env.EAS_PROJECT_ID ? { url: `https://u.expo.dev/${process.env.EAS_PROJECT_ID}` } : undefined,
+  updates: (process.env.EAS_PROJECT_ID ?? 'e0292ea8-6ed9-435d-b854-0e8c0e448b7e') ? { url: `https://u.expo.dev/${(process.env.EAS_PROJECT_ID ?? 'e0292ea8-6ed9-435d-b854-0e8c0e448b7e')}` } : undefined,
 });
