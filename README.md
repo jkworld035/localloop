@@ -27,6 +27,7 @@ docs/              architecture · database · setup · deployment · testing
 | Partner app: registration, documents, profile photo, go online/offline with GPS + background tracking, live delivery requests with server countdown, active job with route map, Google Maps navigation, call shop/customer, geofenced pickup, OTP + cash handover, earnings and history | ✅ |
 | Admin: secure sign-in, overview metrics, live map of partners and open orders, orders search/detail/CSV with cancel and re-dispatch, approvals, users & shops (block/restore, hide shops), support tickets, review moderation, categories, coupons, COD cash hand-overs and shop payouts, delivery-area map editor, admin team (add staff with one-time passwords, roles), app health, platform settings, audit log | ✅ |
 | Push notifications (EN/TE templates, Expo push, token lifecycle) | ✅ code complete; needs EAS/FCM/APNs credentials |
+| Push notifications | ✅ code ready; Android needs Firebase set up once ([docs/push-notifications.md](docs/push-notifications.md)) |
 | Payments | ✅ cash on delivery; UPI / card / netbanking via Razorpay with webhook confirmation, 20-minute hold, automatic refunds ([docs/payments.md](docs/payments.md)) |
 | Crash reporting | ✅ in-house: app errors → Admin → App health (no third-party service) |
 | Store builds | ✅ production profile, version 1.0.0, `pnpm preflight`, store listing + Data safety draft; ⏳ needs owner accounts |

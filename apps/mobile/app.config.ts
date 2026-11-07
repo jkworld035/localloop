@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
 /**
@@ -9,6 +10,11 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
 const IS_DEV = process.env.APP_VARIANT === 'development';
 const IS_PREVIEW = process.env.APP_VARIANT === 'preview';
 const suffix = IS_DEV ? '.dev' : IS_PREVIEW ? '.preview' : '';
+
+// Firebase config for Android push notifications (FCM). EAS cloud builds get it
+// from the GOOGLE_SERVICES_JSON file variable; local builds from
+// ./google-services.json (git-ignored). Not secret, but kept out of the repo.
+const googleServicesFile = process.env.GOOGLE_SERVICES_JSON ?? (existsSync('./google-services.json') ? './google-services.json' : undefined);
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -46,6 +52,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       monochromeImage: './assets/android-icon-monochrome.png',
     },
     config: { googleMaps: { apiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY } },
+    ...(googleServicesFile ? { googleServicesFile } : {}),
     permissions: [
       'ACCESS_COARSE_LOCATION',
       'ACCESS_FINE_LOCATION',
