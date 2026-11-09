@@ -155,7 +155,7 @@ export function useDeleteVendorDocument() {
 // ───────────────────────── products ─────────────────────────
 
 const VENDOR_PRODUCT_SELECT = `
-  id, name, name_te, description, category_id, is_available, is_active, created_at,
+  id, name, name_te, description, description_te, highlights, highlights_te, template_id, category_id, is_available, is_active, created_at,
   images:product_images(id, storage_path, sort_order),
   variants:product_variants(id, label, unit, unit_quantity, price, sale_price, is_default, is_active,
     inventory(quantity, track_inventory, low_stock_threshold))
@@ -190,7 +190,17 @@ export function useSaveProduct(storeId: string) {
   return useMutation({
     mutationFn: async (a: {
       productId: string | null;
-      product: { name: string; nameTe: string; description: string; categoryId: string; isAvailable: boolean };
+      product: {
+        name: string;
+        nameTe: string;
+        description: string;
+        descriptionTe: string;
+        highlights: string[];
+        highlightsTe: string[];
+        templateId: string | null;
+        categoryId: string;
+        isAvailable: boolean;
+      };
       variants: VariantForm[];
     }) =>
       unwrap(
@@ -202,6 +212,10 @@ export function useSaveProduct(storeId: string) {
             name: a.product.name,
             name_te: a.product.nameTe,
             description: a.product.description,
+            description_te: a.product.descriptionTe,
+            highlights: a.product.highlights,
+            highlights_te: a.product.highlightsTe,
+            template_id: a.product.templateId,
             category_id: a.product.categoryId,
             is_available: a.product.isAvailable,
           },
@@ -392,4 +406,29 @@ export function useVendorDashboard(storeId: string | undefined) {
     refetchInterval: 60_000,
     queryFn: async () => unwrap(await supabase.rpc('vendor_dashboard', { p_store_id: storeId! })) as unknown as VendorDashboard,
   });
+}
+
+// ───────────────────────── master catalogue ─────────────────────────
+
+export type CatalogTemplate = Tables<'catalog_templates'>;
+export interface CatalogSize {
+  label: string;
+  unit: string;
+  unit_quantity: number;
+  mrp?: number | null;
+}
+
+/** Products from LocalLoop's catalogue matching what the shop owner is typing. */
+export function useCatalogSearch(query: string) {
+  const q = query.trim();
+  return useQuery({
+    queryKey: ['catalog-search', q.toLowerCase()],
+    enabled: q.length >= 2,
+    staleTime: 5 * 60_000,
+    queryFn: async () => unwrap(await supabase.rpc('search_catalog_templates', { p_query: q, p_limit: 6 })) as CatalogTemplate[],
+  });
+}
+
+export function catalogSizes(t: CatalogTemplate): CatalogSize[] {
+  return Array.isArray(t.sizes) ? (t.sizes as unknown as CatalogSize[]).filter((s) => s && typeof s.label === 'string') : [];
 }

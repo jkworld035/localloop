@@ -1,4 +1,5 @@
 import { formatINR } from '@localloop/shared';
+import { env } from './env';
 
 export const inr = (v: number | string | null | undefined) => formatINR(Number(v ?? 0));
 
@@ -21,3 +22,7 @@ export function ago(v: string | null | undefined, now = Date.now()) {
 }
 
 export const label = (v: string | null | undefined) => (v ? v.replaceAll('_', ' ') : '—');
+
+/** Public URL of a file in the product-media bucket (catalogue and shop product photos). */
+export const productPhotoUrl = (path: string | undefined | null) =>
+  path ? `${env.supabaseUrl}/storage/v1/object/public/product-media/${path.split('/').map(encodeURIComponent).join('/')}` : null;

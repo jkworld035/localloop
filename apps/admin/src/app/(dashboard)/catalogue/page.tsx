@@ -54,6 +54,13 @@ export default async function CataloguePage({ searchParams }: { searchParams: Pr
         description="Shop types customers browse by, and product categories vendors file items under. Hidden categories disappear from the apps but existing shops and products keep them."
       />
       <ActionResult {...sp} />
+      <a href="/catalogue/products" className="mb-8 flex items-center justify-between rounded-2xl border border-forest bg-white p-5 hover:bg-sunken">
+        <span>
+          <span className="block font-bold text-forest">Product catalogue</span>
+          <span className="text-sm text-ink-2">Ready-made products with photos and benefits that shop owners pick while adding items.</span>
+        </span>
+        <span aria-hidden className="text-xl text-forest">→</span>
+      </a>
       <Section title="Shop types" count={storeCats.length}>
         <ul className="space-y-2">{storeCats.map((c) => <Row key={c.id} c={c} />)}</ul>
       </Section>

@@ -304,7 +304,15 @@
     "partner_on_way": "A delivery partner has accepted and is on the way.",
     "finding_partner": "Looking for a nearby delivery partner…",
     "request_partner": "Ask again for a partner",
-    "out_for_delivery": "Picked up — on the way to the customer."
+    "out_for_delivery": "Picked up — on the way to the customer.",
+    "catalog_type_hint": "Start typing the product name — pick it from the LocalLoop catalogue to fill in the photo, description and benefits.",
+    "catalog_suggestions": "From the LocalLoop catalogue",
+    "catalog_picked": "Filled in from the LocalLoop catalogue. Check the price and stock, then save — these photos are added automatically.",
+    "catalog_unlink": "Don't use",
+    "product_description_te": "Description in Telugu",
+    "highlights": "Benefits",
+    "highlights_te": "Benefits in Telugu",
+    "highlights_hint": "One per line, up to 8."
   },
   "partner": {
     "register_title": "Become a delivery partner",
@@ -499,7 +507,8 @@
     "sale_price_too_high": "Offer price must be lower than MRP.",
     "variant_required": "Add at least one size or pack.",
     "vehicle_reg_invalid": "Enter the number as on your RC, e.g. TS 16 AB 1234.",
-    "licence_invalid": "Enter your 15-character driving licence number."
+    "licence_invalid": "Enter your 15-character driving licence number.",
+    "too_many_highlights": "Up to 8 benefits."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -605,7 +614,8 @@
     "photo": "Photo {{index}} of {{total}}",
     "save": "Save",
     "unsave": "Remove from saved",
-    "search_in_store": "Search in this shop"
+    "search_in_store": "Search in this shop",
+    "benefits": "Benefits"
   },
   "cart": {
     "title": "Your cart",

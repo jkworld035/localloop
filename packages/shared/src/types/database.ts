@@ -266,6 +266,78 @@ export type Database = {
           },
         ];
       };
+      catalog_templates: {
+        Row: {
+          id: string;
+          category_id: string;
+          name: string;
+          name_te: string;
+          brand: string;
+          description: string;
+          description_te: string;
+          highlights: string[];
+          highlights_te: string[];
+          sizes: Json;
+          image_paths: string[];
+          is_active: boolean;
+          use_count: number;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          category_id: string;
+          name: string;
+          name_te?: string;
+          brand?: string;
+          description?: string;
+          description_te?: string;
+          highlights?: string[];
+          highlights_te?: string[];
+          sizes?: Json;
+          image_paths?: string[];
+          is_active?: boolean;
+          use_count?: number;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          category_id?: string;
+          name?: string;
+          name_te?: string;
+          brand?: string;
+          description?: string;
+          description_te?: string;
+          highlights?: string[];
+          highlights_te?: string[];
+          sizes?: Json;
+          image_paths?: string[];
+          is_active?: boolean;
+          use_count?: number;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "catalog_templates_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "catalog_templates_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       categories: {
         Row: {
           id: string;
@@ -1535,6 +1607,10 @@ export type Database = {
           search: string | null;
           created_at: string;
           updated_at: string;
+          description_te: string;
+          highlights: string[];
+          highlights_te: string[];
+          template_id: string | null;
         };
         Insert: {
           id?: string;
@@ -1548,6 +1624,10 @@ export type Database = {
           search?: never;
           created_at?: string;
           updated_at?: string;
+          description_te?: string;
+          highlights?: string[];
+          highlights_te?: string[];
+          template_id?: string | null;
         };
         Update: {
           id?: string;
@@ -1561,6 +1641,10 @@ export type Database = {
           search?: never;
           created_at?: string;
           updated_at?: string;
+          description_te?: string;
+          highlights?: string[];
+          highlights_te?: string[];
+          template_id?: string | null;
         };
         Relationships: [
           {
@@ -1575,6 +1659,13 @@ export type Database = {
             columns: ["store_id"];
             isOneToOne: false;
             referencedRelation: "stores";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "products_template_id_fkey";
+            columns: ["template_id"];
+            isOneToOne: false;
+            referencedRelation: "catalog_templates";
             referencedColumns: ["id"];
           },
         ];
@@ -2318,6 +2409,7 @@ export type Database = {
       register_vendor: { Args: { p_owner_name: string; p_business_name: string; p_business_category_id: string; p_gstin?: string; p_email?: string }; Returns: Database["public"]["Tables"]["vendors"]["Row"] };
       reply_support_ticket: { Args: { p_ticket_id: string; p_body: string }; Returns: undefined };
       report_client_error: { Args: { p_app_version: string; p_platform: string; p_message: string; p_stack?: string; p_screen?: string; p_is_fatal?: boolean }; Returns: undefined };
+      search_catalog_templates: { Args: { p_query: string; p_limit?: number }; Returns: Database["public"]["Tables"]["catalog_templates"]["Row"][] };
       search_products: { Args: { p_lat: number; p_lng: number; p_query: string; p_radius_km?: number; p_category_id?: string; p_min_price?: number; p_max_price?: number; p_in_stock_only?: boolean; p_limit?: number; p_offset?: number }; Returns: { product_id: string; product_name: string; product_name_te: string; store_id: string; store_name: string; distance_m: number; variant_id: string; variant_label: string; price: number; sale_price: number; in_stock: boolean; image_path: string; store_is_open: boolean }[] };
       set_default_address: { Args: { p_address_id: string }; Returns: undefined };
       start_cart: { Args: { p_store_id: string }; Returns: string };

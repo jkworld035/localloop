@@ -9,15 +9,19 @@ import { BackRow } from '@/components/BackRow';
 import { AppText, Banner, Button, Card, Chip, ErrorState, LoadingState, Screen, TextField } from '@/components/ui';
 import { publicImageUrl, useCategories } from '@/features/discovery/api';
 import {
+  catalogSizes,
   useAddProductImage,
+  useCatalogSearch,
   useArchiveProduct,
   useMyStore,
   useRemoveProductImage,
   useSaveProduct,
   useVendorProducts,
+  type CatalogTemplate,
 } from '@/features/vendor/api';
 import { usePhotoPicker } from '@/features/vendor/usePhotoPicker';
 import { errorMessage } from '@/lib/errors';
+import { useDebounced } from '@/lib/useDebounced';
 import { removeFile } from '@/services/upload';
 
 interface VariantDraft {
@@ -45,6 +49,9 @@ const blankVariant = (): VariantDraft => ({
 });
 
 const MAX_PHOTOS = 5;
+const lines = (s: string) => s.split('\n').map((x) => x.trim()).filter(Boolean);
+/** Catalogue photos are shared by every shop using them; never delete the file. */
+const isCatalogPhoto = (path: string) => path.startsWith('catalog/');
 
 export default function ProductEdit() {
   const { t, i18n } = useTranslation();
@@ -64,17 +71,28 @@ export default function ProductEdit() {
   const [name, setName] = useState('');
   const [nameTe, setNameTe] = useState('');
   const [description, setDescription] = useState('');
+  const [descriptionTe, setDescriptionTe] = useState('');
+  const [highlights, setHighlights] = useState('');
+  const [highlightsTe, setHighlightsTe] = useState('');
+  const [template, setTemplate] = useState<CatalogTemplate | null>(null);
+  const [templateId, setTemplateId] = useState<string | null>(null);
   const [categoryId, setCategoryId] = useState('');
   const [available, setAvailable] = useState(true);
   const [variants, setVariants] = useState<VariantDraft[]>([blankVariant()]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loadedId, setLoadedId] = useState<string | null>(null);
+  const searchFor = useDebounced(!params.id && !templateId ? name : '', 350);
+  const suggestions = useCatalogSearch(searchFor);
 
   useEffect(() => {
     if (!existing || loadedId === existing.id) return;
     setName(existing.name);
     setNameTe(existing.name_te);
     setDescription(existing.description);
+    setDescriptionTe(existing.description_te);
+    setHighlights(existing.highlights.join('\n'));
+    setHighlightsTe(existing.highlights_te.join('\n'));
+    setTemplateId(existing.template_id);
     setCategoryId(existing.category_id);
     setAvailable(existing.is_available);
     setVariants(
@@ -101,6 +119,34 @@ export default function ProductEdit() {
   if (params.id && !existing) return <ErrorState error={new Error('product_not_found')} />;
 
   const setVariant = (key: string, patch: Partial<VariantDraft>) => setVariants((vs) => vs.map((v) => (v.key === key ? { ...v, ...patch } : v)));
+  const pickTemplate = (tpl: CatalogTemplate) => {
+    setTemplate(tpl);
+    setTemplateId(tpl.id);
+    setName(tpl.name);
+    setNameTe(tpl.name_te);
+    setDescription(tpl.description);
+    setDescriptionTe(tpl.description_te);
+    setHighlights(tpl.highlights.join('\n'));
+    setHighlightsTe(tpl.highlights_te.join('\n'));
+    if (categories.data?.some((c) => c.id === tpl.category_id)) setCategoryId(tpl.category_id);
+    const sizes = catalogSizes(tpl);
+    if (sizes.length)
+      setVariants(
+        sizes.map((sz) => ({
+          ...blankVariant(),
+          label: sz.label,
+          unit: (PRODUCT_UNITS as readonly string[]).includes(sz.unit) ? (sz.unit as VariantDraft['unit']) : 'piece',
+          unitQuantity: String(sz.unit_quantity ?? 1),
+          price: sz.mrp ? String(sz.mrp) : '',
+        })),
+      );
+    setErrors({});
+  };
+  const unlinkTemplate = () => {
+    setTemplate(null);
+    setTemplateId(null);
+  };
+
   const num = (s: string) => (s.trim() === '' ? NaN : Number(s.replace(',', '.')));
 
   const submit = () => {
@@ -108,6 +154,10 @@ export default function ProductEdit() {
       name,
       nameTe,
       description,
+      descriptionTe,
+      highlights: lines(highlights),
+      highlightsTe: lines(highlightsTe),
+      templateId,
       categoryId,
       isAvailable: available,
       variants: variants.map((v) => ({
@@ -135,7 +185,17 @@ export default function ProductEdit() {
     save.mutate(
       {
         productId: existing?.id ?? null,
-        product: { name: d.name, nameTe: d.nameTe, description: d.description, categoryId: d.categoryId, isAvailable: d.isAvailable },
+        product: {
+          name: d.name,
+          nameTe: d.nameTe,
+          description: d.description,
+          descriptionTe: d.descriptionTe,
+          highlights: d.highlights,
+          highlightsTe: d.highlightsTe,
+          templateId: d.templateId,
+          categoryId: d.categoryId,
+          isAvailable: d.isAvailable,
+        },
         variants: d.variants.map((v) => ({
           id: v.id,
           label: v.label,
@@ -179,7 +239,9 @@ export default function ProductEdit() {
                   hitSlop={8}
                   onPress={() =>
                     removeImage.mutate(img.id, {
-                      onSuccess: () => void removeFile('product-media', img.storage_path),
+                      onSuccess: () => {
+                        if (!isCatalogPhoto(img.storage_path)) void removeFile('product-media', img.storage_path);
+                      },
                       onError: (e) => Alert.alert(errorMessage(e)),
                     })
                   }
@@ -206,13 +268,71 @@ export default function ProductEdit() {
             )}
           </ScrollView>
         </View>
+      ) : template ? (
+        <View style={styles.group}>
+          <View style={styles.rowBetween}>
+            <AppText weight="medium">{t('vendor.product_photos')}</AppText>
+            <Button label={t('vendor.catalog_unlink')} variant="ghost" compact onPress={unlinkTemplate} />
+          </View>
+          {template.image_paths.length > 0 && (
+            <ScrollView horizontal contentContainerStyle={styles.photos} showsHorizontalScrollIndicator={false}>
+              {template.image_paths.map((path) => (
+                <View key={path} style={styles.photo}>
+                  <Image source={{ uri: publicImageUrl('product-media', path) ?? undefined }} style={StyleSheet.absoluteFill} contentFit="cover" />
+                </View>
+              ))}
+            </ScrollView>
+          )}
+          <Banner tone="success" message={t('vendor.catalog_picked')} />
+        </View>
       ) : (
-        <Banner tone="info" message={t('vendor.photos_after_save')} />
+        <Banner tone="info" message={t('vendor.catalog_type_hint')} />
       )}
 
-      <TextField label={t('vendor.product_name')} value={name} onChangeText={setName} error={err('name')} />
+      <TextField label={t('vendor.product_name')} value={name} onChangeText={setName} error={err('name')} autoCorrect={false} />
+      {!existing && !templateId && (suggestions.data?.length ?? 0) > 0 && (
+        <View style={styles.suggestions} accessibilityLabel={t('vendor.catalog_suggestions')}>
+          <AppText variant="small" color={colors.text.secondary}>
+            {t('vendor.catalog_suggestions')}
+          </AppText>
+          {suggestions.data!.map((tpl) => {
+            const thumb = publicImageUrl('product-media', tpl.image_paths[0]);
+            const sizes = catalogSizes(tpl);
+            return (
+              <Pressable
+                key={tpl.id}
+                accessibilityRole="button"
+                accessibilityLabel={(te && tpl.name_te) || tpl.name}
+                onPress={() => pickTemplate(tpl)}
+                style={({ pressed }) => [styles.suggestion, pressed && styles.pressed]}
+              >
+                <View style={styles.thumb}>
+                  {thumb ? (
+                    <Image source={{ uri: thumb }} style={StyleSheet.absoluteFill} contentFit="cover" />
+                  ) : (
+                    <Ionicons name="cube-outline" size={22} color={colors.text.secondary} />
+                  )}
+                </View>
+                <View style={styles.flex}>
+                  <AppText weight="medium" numberOfLines={2}>
+                    {(te && tpl.name_te) || tpl.name}
+                  </AppText>
+                  <AppText variant="small" color={colors.text.secondary} numberOfLines={1}>
+                    {[tpl.brand, sizes.map((x) => x.label).join(' · ')].filter(Boolean).join(' — ')}
+                  </AppText>
+                </View>
+                <Ionicons name="add-circle-outline" size={24} color={colors.brand.forest} />
+              </Pressable>
+            );
+          })}
+        </View>
+      )}
+      {!existing && !template && <AppText variant="small" color={colors.text.secondary}>{t('vendor.photos_after_save')}</AppText>}
       <TextField label={t('vendor.product_name_te')} optional value={nameTe} onChangeText={setNameTe} hint={t('vendor.shop_name_te_hint')} />
       <TextField label={t('vendor.product_description')} optional multiline maxLength={2000} value={description} onChangeText={setDescription} />
+      <TextField label={t('vendor.product_description_te')} optional multiline maxLength={2000} value={descriptionTe} onChangeText={setDescriptionTe} />
+      <TextField label={t('vendor.highlights')} optional multiline hint={t('vendor.highlights_hint')} value={highlights} onChangeText={setHighlights} error={err('highlights')} />
+      <TextField label={t('vendor.highlights_te')} optional multiline hint={t('vendor.highlights_hint')} value={highlightsTe} onChangeText={setHighlightsTe} error={err('highlightsTe')} />
 
       <View style={styles.group} accessibilityRole="radiogroup" accessibilityLabel={t('vendor.product_category')}>
         <AppText weight="medium">{t('vendor.product_category')}</AppText>
@@ -331,4 +451,8 @@ const styles = StyleSheet.create({
   rowBetween: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   pair: { flexDirection: 'row', gap: spacing.md },
   flex: { flex: 1 },
+  suggestions: { gap: spacing.xs, padding: spacing.sm, borderRadius: radii.md, borderWidth: 1, borderColor: colors.surface.border, backgroundColor: colors.surface.card },
+  suggestion: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: 56, paddingVertical: spacing.xs },
+  pressed: { opacity: 0.6 },
+  thumb: { width: 48, height: 48, borderRadius: radii.sm, overflow: 'hidden', backgroundColor: colors.surface.sunken, alignItems: 'center', justifyContent: 'center' },
 });

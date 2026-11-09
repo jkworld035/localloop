@@ -8,6 +8,7 @@ import { arrivalEstimate, locationFreshness } from './utils/freshness';
 import { gstin, indianMobile, pincode } from './validation/common';
 import { partnerRegistrationSchema } from './validation/partner';
 import { variantSchema } from './validation/product';
+import { parseSizeLine, parseSizeLines } from './utils/catalog';
 
 describe('order state machine', () => {
   it('matches public.order_transition_allowed() in the migration', () => {
@@ -99,5 +100,21 @@ describe('geo & format utils', () => {
     expect(arrivalEstimate({ ...base, eta_seconds: null }, now)).toBeNull();
     // Overdue estimates never show zero or negative minutes.
     expect(arrivalEstimate({ ...base, eta_computed_at: '2026-11-05T09:40:00Z' }, now)?.minutes).toBe(1);
+  });
+});
+
+describe('catalogue size lines', () => {
+  it('reads label, unit, quantity and MRP', () => {
+    expect(parseSizeLine('1 kg | 72')).toEqual({ label: '1 kg', unit: 'kg', unit_quantity: 1, mrp: 72 });
+    expect(parseSizeLine('500g, ₹38.5')).toEqual({ label: '500g', unit: 'g', unit_quantity: 500, mrp: 38.5 });
+    expect(parseSizeLine('1 Ltr pouch | 68')).toEqual({ label: '1 Ltr pouch', unit: 'l', unit_quantity: 1, mrp: 68 });
+    expect(parseSizeLine('Pack of 6 | 120')).toEqual({ label: 'Pack of 6', unit: 'piece', unit_quantity: 6, mrp: 120 });
+  });
+  it('falls back to one piece without an MRP', () => {
+    expect(parseSizeLine('Regular')).toEqual({ label: 'Regular', unit: 'piece', unit_quantity: 1, mrp: null });
+  });
+  it('skips blank lines and caps at 10', () => {
+    expect(parseSizeLines('1 kg | 72\n\n  \n5 kg | 310')).toHaveLength(2);
+    expect(parseSizeLines(Array.from({ length: 15 }, (_, i) => `${i + 1} kg`).join('\n'))).toHaveLength(10);
   });
 });

@@ -42,6 +42,8 @@ export default function ProductPage() {
 
   const p = product.data;
   const name = (te && p.name_te) || p.name;
+  const description = (te && p.description_te) || p.description;
+  const highlights = te && p.highlights_te.length ? p.highlights_te : p.highlights;
   const variants = sellableVariants(p);
   const variant = variants.find((v) => v.id === selected) ?? variants[0];
   const images = [...p.images].sort((a, b) => a.sort_order - b.sort_order);
@@ -152,12 +154,26 @@ export default function ProductPage() {
           <Banner tone="danger" message={t('shop.out_of_stock')} />
         )}
 
-        {!!p.description && (
+        {highlights.length > 0 && (
+          <View style={styles.group}>
+            <AppText variant="title" weight="bold">
+              {t('shop.benefits')}
+            </AppText>
+            {highlights.map((h, i) => (
+              <View key={i} style={styles.benefit}>
+                <Ionicons name="checkmark-circle" size={20} color={colors.brand.green} />
+                <AppText style={styles.flex}>{h}</AppText>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {!!description && (
           <View style={styles.group}>
             <AppText variant="title" weight="bold">
               {t('shop.description')}
             </AppText>
-            <AppText>{p.description}</AppText>
+            <AppText>{description}</AppText>
           </View>
         )}
       </ScrollView>
@@ -167,6 +183,7 @@ export default function ProductPage() {
 }
 
 const styles = StyleSheet.create({
+  benefit: { flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' },
   root: { flex: 1, backgroundColor: colors.surface.background },
   body: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xxxl },
   imageWrap: { borderRadius: radii.lg, overflow: 'hidden', backgroundColor: colors.surface.card },

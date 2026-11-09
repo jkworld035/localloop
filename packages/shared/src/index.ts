@@ -11,6 +11,7 @@ export * from './theme/tokens';
 export * from './utils/format';
 export * from './utils/geo';
 export * from './utils/freshness';
+export * from './utils/catalog';
 export * from './types/database';
 export * from './types/errors';
 export * from './legal';

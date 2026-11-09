@@ -40,7 +40,7 @@ export function useStoreSummary(storeId: string, location: SelectedLocation | nu
 }
 
 const PRODUCT_SELECT = `
-  id, name, name_te, description, is_available, category_id,
+  id, name, name_te, description, description_te, highlights, highlights_te, is_available, category_id,
   category:categories(id, name_en, name_te, sort_order),
   images:product_images(storage_path, sort_order),
   variants:product_variants(id, label, unit, unit_quantity, price, sale_price, is_default, is_active,
