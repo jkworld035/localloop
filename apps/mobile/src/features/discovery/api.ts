@@ -65,7 +65,9 @@ export function useCategories(kind: 'store' | 'product') {
 /** Public URL for an image in a public bucket (store-media, product-media, avatars). */
 export function publicImageUrl(bucket: 'store-media' | 'product-media' | 'avatars', path: string | null | undefined) {
   if (!path) return null;
-  return supabase.storage.from(bucket).getPublicUrl(path, { transform: { width: 600, quality: 70 } }).data.publicUrl;
+  // Plain public URL. Supabase's resizing (`transform`) needs the Pro plan and fails on Free,
+  // so photos are compressed on upload instead (phone ≤1600 px JPEG, admin ≤1200 px).
+  return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
 }
 
 /** Products matching a search across shops near the selected location (server: search_products). */

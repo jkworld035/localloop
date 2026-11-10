@@ -7,6 +7,26 @@ import { supabaseBrowser } from '@/lib/supabase/browser';
 const MAX = 5;
 const MAX_BYTES = 5 * 1024 * 1024;
 const EXT: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+const MAX_SIDE = 1200;
+
+/** Shrinks to at most 1200 px and re-encodes as JPEG so phones load it quickly. */
+async function shrink(file: File): Promise<Blob> {
+  try {
+    const bmp = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bmp.width * scale);
+    canvas.height = Math.round(bmp.height * scale);
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = '#fff'; // transparent PNGs get a white background
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/jpeg', 0.8));
+    return blob && blob.size < file.size ? blob : file;
+  } catch {
+    return file;
+  }
+}
 
 /**
  * Catalogue photos upload straight from the browser to storage (so large
@@ -24,11 +44,16 @@ export function PhotoField({ templateId, existing }: { templateId: string; exist
     const added: string[] = [];
     const problems: string[] = [];
     for (const f of Array.from(files).slice(0, MAX - paths.length)) {
-      if (!EXT[f.type]) problems.push(`${f.name}: not a JPG, PNG or WebP`);
-      else if (f.size > MAX_BYTES) problems.push(`${f.name}: larger than 5 MB`);
+      if (!EXT[f.type]) {
+        problems.push(`${f.name}: not a JPG, PNG or WebP`);
+        continue;
+      }
+      const blob = await shrink(f);
+      if (blob.size > MAX_BYTES) problems.push(`${f.name}: larger than 5 MB`);
       else {
-        const path = `catalog/${templateId}/${crypto.randomUUID()}.${EXT[f.type]}`;
-        const { error: e } = await supabaseBrowser().storage.from('product-media').upload(path, f, { contentType: f.type, cacheControl: '31536000' });
+        const type = blob.type || f.type;
+        const path = `catalog/${templateId}/${crypto.randomUUID()}.${EXT[type] ?? 'jpg'}`;
+        const { error: e } = await supabaseBrowser().storage.from('product-media').upload(path, blob, { contentType: type, cacheControl: '31536000' });
         if (e) problems.push(`${f.name}: ${e.message}`);
         else added.push(path);
       }
