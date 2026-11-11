@@ -27,3 +27,11 @@ Start with what Kamareddy kirana shops sell most: rice, atta, dal, oil, sugar,
 salt, tea, milk, biscuits, soaps, detergents.
 
 Who can edit: super admins and operations admins (the `catalog` permission).
+
+## Starter catalogue
+Migration `0026` loads 185 everyday products (rice, atta, dals, oils, spices,
+dairy, bread, snacks, drinks, vegetables, fruits, personal care, household),
+without photos or MRP. To add more in bulk, append lines to
+`supabase/catalog/starter.txt`, run
+`python3 scripts/gen-starter-catalog.py supabase/migrations/<new timestamp>_more_catalogue.sql`
+and push; products whose name already exists are skipped.

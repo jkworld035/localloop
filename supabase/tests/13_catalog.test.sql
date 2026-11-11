@@ -2,7 +2,7 @@
 -- find them while typing and add them with photos, description and benefits.
 begin;
 \ir _helpers.sql
-select plan(14);
+select plan(15);
 
 select tests.seed_world();
 select id as staples from public.categories where slug = 'staples' \gset
@@ -21,10 +21,11 @@ select ok(exists (select 1 from public.admin_audit_logs where entity_type = 'cat
 -- ── vendor search ─────────────────────────────────────────
 select tests.login(tests.id('vendor'));
 select is((select name from public.search_catalog_templates('ashirvad atta') limit 1), 'Aashirvaad Whole Wheat Atta', 'misspelt name still found');
-select is((select count(*)::int from public.search_catalog_templates('atta')), 1, 'inactive templates are hidden');
-select is((select count(*)::int from public.search_catalog_templates('గోధుమ')), 1, 'found by Telugu name');
+select ok(not exists (select 1 from public.search_catalog_templates('atta hidden', 20) where name = 'Atta Hidden Brand'), 'inactive templates are hidden');
+select ok(exists (select 1 from public.search_catalog_templates('గోధుమ', 20) where id = :'t1'), 'found by Telugu name');
 select is((select count(*)::int from public.search_catalog_templates('a')), 0, 'one letter is too short to search');
-select is((select count(*)::int from public.catalog_templates), 1, 'vendors read only active templates');
+select ok(not exists (select 1 from public.catalog_templates where not is_active), 'vendors read only active templates');
+select ok((select count(*) from public.catalog_templates) >= 150, 'starter catalogue is loaded');
 select throws_ok(format($$ insert into public.catalog_templates (category_id, name) values (%L, 'Vendor Made') $$, :'staples'),
   '42501', null, 'shop owners cannot add to the catalogue');
 with u as (update public.catalog_templates set name = 'Hacked' returning 1)
